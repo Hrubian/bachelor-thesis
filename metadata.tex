@@ -49,19 +49,35 @@
 
 % Abstract (recommended length around 80-200 words; this is not a copy of your thesis assignment!)
 \def\Abstract{%
-\xxx{Use the most precise, shortest sentences that state what problem the
-thesis addresses, how it is approached, pinpoint the exact result achieved, and
-describe the applications and significance of the results. Highlight anything
-novel that was discovered or improved by the thesis. Maximum length is 200
-words, but try to fit into 120. Abstracts are often used for deciding if
-a reviewer will be suitable for the thesis; a well-written abstract thus
-increases the probability of getting a reviewer who will like the thesis.}
+\xxx{TODO finish english abstract}
+Abstract interpretation is an approximation method for semantics of computer programs.
+The method is widely used in compilers for finding optimization opportunities or as a
+certification against certain types of bugs.
+It systematically interprets the program semantics over an abstract domain which is
+connected with the original domain by a galois connection.
+
+
+The method could be also useful for analysis of data-analysis programs, where the most
+popular languages are dynamic languages python and R. The resulting programs are
+usually error-prone, since
+
+
+The goal of this paper is to explore the possibility to use abstract interpretation
+to analyse data-analysis programs working with tabular data and create a PoC
+implementation of the idea for pandas library in python.
 }
 
 % 3 to 5 keywords (recommended) separated by \sep
 % Keywords are useful for indexing and searching for the theses by topic.
 \def\ThesisKeywords{%
 \xxx{keyword\sep key phrase}
+python
+\sep
+pandas
+\sep
+abstract interpretation
+\sep
+data analysis
 }
 
 % If any of your metadata strings contains TeX macros, you need to provide
@@ -91,5 +107,5 @@ increases the probability of getting a reviewer who will like the thesis.}
 }
 
 \def\AbstractCS{%
-\xxx{Abstrakt práce přeložte také do češtiny.}
+\xxx{TODO finish czech abstract}
 }
