@@ -1,9 +1,68 @@
 \chapter{Abstract Interpretation}
 
-%An~example citation: \cite{Andel07}
+\xxx{TODO add some more introduction (or it will probably be in the Introduction part)?}
+
+In this chapter, we will build the theory of Abstract Interpretation from scratch, so that we are able to use the method
+for the analysis in the future chapters.
+We will start by defining what we mean by a Program and what can be considered an approximation of a Program.
+In order to understand Abstract Interpretation, we will next dive into the theory of algebraic structure called Lattice.
+Then, with all we will have done, we will be able to define Galois connection - the essence of the method itself.
 
 \section{Program and approximation}
 
+\subsection{Syntax}
+
+We define a simple language: % TODO comment?
+
+\begin{defn}[Expression]
+    Expresion is defined inductively:
+    \begin{itemize}
+        \item a constant $n \in \mathbb{Z}$ is an expression
+        \item a variable $x$ is an expression
+        \item for each pair $E$, $F$ of expressions the following are also expressions: $E+F$, $E-F$, $E * F$, $E/F$, $E \geq F$
+    \end{itemize}
+\end{defn}
+
+\begin{defn}[Statement] % TODO or Command?
+    The following are statements:
+    \begin{itemize}
+        \item exit
+        \item $x = E$ for expression $E$ %todo format
+        \item if $E$ goto $n$ for expression $E$ and constant $n$
+        \item input x
+        \item output E for expression $E$
+    \end{itemize}
+    We will denote the set of all statements $\mathbb{S}$
+\end{defn}
+
+\subsection{Semantic}
+
+\begin{defn}[Program]
+    Program is a function $P: \mathbb{Z} \rightarrow \mathbb{S}$
+\end{defn}
+
+\begin{defn}[Trace]
+\end{defn}[Trace]
+
+\subsection{Approximation}
+
+
+
 \section{Lattices}
 
-\section{Galois connections, abstraction and concretization}
+The Abstract Interpretation is defined on Lattices - algebraic structures with additional ordering constraints.
+In this subchapter, we will cover
+
+\begin{defn}[Partially ordered set]
+    Partially ordered set is a tuple $(M, \leq)$, where $M$ is a (possibly infinite) set and $\leq$ is a binary relation
+    which is:
+    \begin{itemize}
+        \item Reflexive: $\forall x \in M, x \leq x$
+        \item Antisymmetric: $\forall x, y \in M, a \leq b \land b \leq a \implies a = b$
+        \item Transitive: $\forall x, y, z \in M, x \leq y \land y \leq z \implies x \leq z$
+    \end{itemize}
+\end{defn}
+
+
+
+\section{Galois connections, abstraction and concretization} % TODO shorter name
