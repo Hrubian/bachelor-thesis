@@ -2,66 +2,73 @@
 \addcontentsline{toc}{chapter}{Introduction}
 
 % todo you can cite this page: https://www.statista.com/statistics/871513/worldwide-data-created/
-Each year the world produces tens of zetta-bytes of data of various kind, purpose, size and structure.
-The amount of data created each year is growing in an unimaginably fast pace.
-To get the most useful information out of these data, we must be able to process them efficiently.
-There is a whole academic field Data Science studying this problem.
-An important part of the data analysis done by data scientists is sometimes called a data manipulation or data wrangling.
-The goal of data manipulation is to take the raw data produced by some source and clean and transform them into
-better-structured data without errors which are more suitable for the analysis itself.
-The data manipulation - cleaning and transformations - usually cannot be done manually, since the data are too large
-for that.
-For manipulating large amounts of data, one needs an automated tool.
-Popular approach to this problem is a library in a programming language.
-Most of such libraries, which became widely used in the industry, are Pandas in Python, Tibble in R (R also has built-in
-support for data frames) or DataFrames.jl in Julia.
+Each year the~world produces tens~of~zetta-bytes of~data of~various kind, purpose, size and~structure.
+The amount of~data created each year is~growing at~an~unimaginably fast pace.
+To get the most useful information out of~these~data, we must be~able to~process them efficiently.
+There is a~whole academic field Data~Science studying this problem.
+An important part of~the data analysis done by data scientists is~sometimes called a~data~manipulation or data~wrangling.
+The~goal of~data~manipulation is~to~take the raw~data produced by~some source and clean and transform them into
+better-structured error-free data which are more suitable for the~analysis itself.
+The data manipulation -~cleaning~and~transformations~- usually cannot be~done manually, since the~data are too large
+for~that.
+For manipulating large amounts of data, one needs an~automated tool.
+Popular approach to this problem is a~library in~a~programming language.
+Most of~such libraries, which became widely used in~the~industry, are Pandas~in~Python, Tibble~in~R (R also has built-in
+support for~data~frames) or DataFrames.jl~in~Julia.
 These libraries usually come with two types of data structures: one-dimensional array usually called Series
-and two-dimensional tabular structure usually called Dataset or Dataframe.
+and two-dimensional tabular structure usually called Dataset~or~Dataframe.
 
 
-The mentioned languages, Python, R and Julia, are all dynamic and interpreted languages, meaning that they do not provide
-the programmer with any compile-time checks for type consistency and variable existence.
-These languages are popular in data-related subjects due to their shallow learning curve, easy syntax and the fact that
-one does not need to complete course on computer architecture to use it.
-However, the user of a dynamic languages has to keep most of the information in his head (or use comments in code a lot)
-which is a potential source of many different errors. % todo support the claim with citation
+The~mentioned languages, Python, R and Julia, are~all~dynamic and~interpreted languages, meaning that they do~not~provide
+the~programmer with any~compile-time checks for type consistency and~variable or~column existence.
+These languages are~popular in~data-related subjects due~to~their shallow learning curve, easy~syntax and~the~fact that
+one does~not need to~complete course on~computer architecture to~use~it.
+However, the user of~a~dynamic languages has~to~keep most of~the~information in~his~head (or~use~comments in~code a~lot)
+which is~a~potential source of~many different errors, that will, in~addition, be~detected no~sooner than in~runtime when
+the program crashes.
 
-Potential way to go could be to use a different programming language.
-One with static strict type system, which would allow us to use typed data-frames - a data frames with statically assigned
-column names and types.
-The operations on dataframes would then be able to determine the types of a results of data-frame transformative functions.
-Even though this solution solves the issue with column naming and column types, it has many problems that dynamic
-languages do not.
-Actually, all the arguments mentioned for the popularity of dynamic languages are also arguments against static languages.
-Namely steep learning curve, complicated syntax, and technical complexity.
-Additionally, the necessity for a lot of boilerplate code, worse readability and the fact, that dynamic languages,
-contrary to the static languages, usually support REPL tool or just creating one file and running it.
-Ideally, we would like to use the dynamic languages like Python, R or Julia, while keeping the safety of static languages.
+Potential way~to~go could~be to~use a~different programming language.
+One~with static~strict~type~system, which would allow~us to~use typed data-frames~-~a data frames with statically~assigned
+column~names and~types.
+The~operations on~dataframes would then be~able to~determine the~types of~a~results of~data-frame transformative functions.
+Even though this~solution solves the~issue with~column~naming and column~types, it~has many problems that dynamic
+languages do~not.
+Actually, all~the~arguments mentioned for~the~popularity of~dynamic languages are~also~arguments against static languages.
+Namely steep~learning~curve, complicated syntax, and~technical complexity.
+Additionally, the~necessity for~a~lot~of~boilerplate code, worse readability and~the~fact, that~dynamic languages,
+contrary~to the~static languages, usually support REPL~tool or~just creating one~file and running~it.
+Ideally, we would~like to~use the~dynamic languages like~Python, R or Julia, while keeping the~safety of~static languages.
 
-\textbf{The goal of this paper} is to propose and explore an alternative solution to the problem of data-manipulation
-code being error-prone and provide an implementation of such solution.
-The solution will be based on a program verification method called Abstract Interpretation.
-
-\xxx{TODO add some historical context}
-
-In essence, Abstract Interpretation partially executes the given computer program over an abstract domain, gaining
-partial information about the programs semantics and answering questions such as: % todo cite absint :)
+\textbf{The~goal~of~this~paper}~is to~propose and~explore an~alternative solution to~the~problem of~data-manipulation
+code being error-prone and~provide an~implementation of~such~solution.
+The~solution will~be~based on~a~program verification method called Abstract Interpretation.
+The origins of~the~ideas behind the~method can~be~traced back~to~1970s and~were~explored by~Patrick and~Radhia~Cousot
+and~the~name Abstract Interpretation was first used on~the~Fourth ACM
+Symposium on~Principles of~Programming Languages in~1977 in~Los~Angeles~\cite{Cousot:1977:AI}.
+In~essence, Abstract Interpretation partially executes the~given computer program over~an~abstract domain, gaining
+partial~information about the~programs semantics and~answering questions (as~mentioned
+by~B.~Blanchet\cite{Blanchet:2002:AI}) such~as:
 \begin{itemize}
     \item worst-case execution time
     \item security properties
     \item stack allocation
     \item unreachable code elimination
+    \item and more \ldots
 \end{itemize}
-and more.
 
-In the first chapter of the thesis, we will try to understand the theory of POSETs, Lattices and Galois connection which
-are the core mathematical concepts of Abstract Interpretation.
-Then, in the second chapter, we will explore the needs of data scientists regarding the tool for data manipulation.
-We will also take a look how pandas does that and once again shortly touch the option based on type systems.
-The third chapter will put all the pieces together.
-We will define an Abstract Interpretation framework for the world of data-frames and series.
-We will also take a look how some basic operations like merge, groupby or concatenation will work in the abstract domain.
-The fourth chapter will belong to the implementation of the analysis tool itself, its architecture, documentation,
-capabilities, and limitations.
-Finally, in the last, fifth, chapter, we will evaluate the implemented solution on a set of realistic examples of pandas
-code and analyze and discuss its usability in practice.
+The~idea of~analyzing programs working with~dataframes was~already proposed once by~Yungyu~Zhuang
+and~Ming-Yang~Lu\cite{Zhuang:2022:TypeChecking}.
+However, we~aim to~go~deeper in~the~analysis and~choose a~different~approach for~implementing the~tool.
+
+In~the~first chapter of~the~thesis, we~will try to~understand the~theory of~POSETs, Lattices and~Galois~connection which
+are~the~core mathematical concepts of~Abstract Interpretation.
+Then, in~the~second chapter, we~will explore the~needs of~data scientists regarding the~tool for~data~manipulation.
+We~will~also take~a~look at~how~the~pandas library does~that, and~we~will once~again shortly touch the~option based~on~type
+systems.
+The~third chapter will~put all~the~pieces together.
+We~will define an~Abstract Interpretation framework for~the~world of~data-frames and~series.
+We~will also take~a~look at~how some basic operations like~merge, groupby or concatenation will~work in~the~abstract domain.
+The~fourth chapter will~belong to~the~implementation of~the~analysis~tool itself, its~architecture, documentation,
+capabilities, and~limitations.
+Finally, in~the~last, fifth, chapter, we~will evaluate the implemented solution on~a~set of~realistic examples of~pandas
+code and~analyze and~discuss its~usability in~practice.
