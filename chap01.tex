@@ -1,68 +1,67 @@
 \chapter{Abstract Interpretation}
 
-\xxx{TODO add some more introduction (or it will probably be in the Introduction part)?}
+\xxx{introduction}
 
-In this chapter, we will build the theory of Abstract Interpretation from scratch, so that we are able to use the method
-for the analysis in the future chapters.
-We will start by defining what we mean by a Program and what can be considered an approximation of a Program.
-In order to understand Abstract Interpretation, we will next dive into the theory of algebraic structure called Lattice.
-Then, with all we will have done, we will be able to define Galois connection - the essence of the method itself.
+\section{Introductory Example} %=======================================================================================%
 
-\section{Program and approximation}
+\xxx{introductory example}
 
-\subsection{Syntax}
+\section{Lattices} %===================================================================================================%
 
-We define a simple language: % TODO comment?
+Recall the definition of partial order:
 
-\begin{defn}[Expression]
-    Expresion is defined inductively:
-    \begin{itemize}
-        \item a constant $n \in \mathbb{Z}$ is an expression
-        \item a variable $x$ is an expression
-        \item for each pair $E$, $F$ of expressions the following are also expressions: $E+F$, $E-F$, $E * F$, $E/F$, $E \geq F$
-    \end{itemize}
+\begin{defn}[Partial order]
+    Relation $\leq$ on set $S$ is an partial order if $\forall a, b, c \in P$:
+    \begin{enumerate}
+        \item $a \leq a$ (Reflexivity)
+        \item $a \leq b \land b \leq a \implies a = b$ (Antisymmetry)
+        \item $a \leq b \land b \leq c \implies a \leq c$ (Transitivity)
+    \end{enumerate}
 \end{defn}
 
-\begin{defn}[Statement] % TODO or Command?
-    The following are statements:
-    \begin{itemize}
-        \item exit
-        \item $x = E$ for expression $E$ %todo format
-        \item if $E$ goto $n$ for expression $E$ and constant $n$
-        \item input x
-        \item output E for expression $E$
-    \end{itemize}
-    We will denote the set of all statements $\mathbb{S}$
+Then defining a partially ordered set (Poset) is straightforward:
+
+\begin{defn}[Poset]
+    The pair $(S, \leq)$ is a Poset, if $\leq$ is a partial order on $S$
 \end{defn}
 
-\subsection{Semantic}
+We will also mention few examples of Poset:
 
-\begin{defn}[Program]
-    Program is a function $P: \mathbb{Z} \rightarrow \mathbb{S}$
+\begin{itemize}
+    \item $(\mathbb{R}, \leq), (\mathbb{Q}, \leq), (\mathbb{Z}, \leq)$ are all Posets
+    \item For a set $S$, $(\mathbb{P}(S), \subseteq)$ is a Poset
+    \item For directed acyclic graph $G=(V,E)$ the pair $(V, reachability)$ is a Poset
+\end{itemize}
+
+Last thing that we need before defining a Lattice are the definitions of supremum and infimum.
+
+\begin{defn}
+    On partially ordered set $(S, \leq)$, for $R \subseteq S$:
+
+    Upper bound of $R$ in $S$ is $a \in S$ such that $\forall x \in R: x \leq a$
+
+    Lower bound of $R$ in $S$ is $a \in S$ such that $\forall x \in R: a \leq x$
+
+    Supremum of $R$ in $S$ is $a \in S$ such that $a$ is a lower bound of $R$
+
+    Infimum of $R$ in $S$ is $a \in S$ such that
 \end{defn}
 
-\begin{defn}[Trace]
-\end{defn}[Trace]
+With this knowledge, we have all we need to define a Lattice:
+\begin{defn}[Lattice]
 
-\subsection{Approximation}
-
-
-
-\section{Lattices}
-
-The Abstract Interpretation is defined on Lattices - algebraic structures with additional ordering constraints.
-In this subchapter, we will cover
-
-\begin{defn}[Partially ordered set]
-    Partially ordered set is a tuple $(M, \leq)$, where $M$ is a (possibly infinite) set and $\leq$ is a binary relation
-    which is:
-    \begin{itemize}
-        \item Reflexive: $\forall x \in M, x \leq x$
-        \item Antisymmetric: $\forall x, y \in M, a \leq b \land b \leq a \implies a = b$
-        \item Transitive: $\forall x, y, z \in M, x \leq y \land y \leq z \implies x \leq z$
-    \end{itemize}
 \end{defn}
 
 
+\xxx{lattices}
 
-\section{Galois connections, abstraction and concretization} % TODO shorter name
+
+
+\section{Galois Connections} %=========================================================================================%
+
+\xxx{galois connections}
+
+\section{The method} %=================================================================================================%
+
+\section*{Summary}
+\addcontentsline{toc}{section}{Summary}
