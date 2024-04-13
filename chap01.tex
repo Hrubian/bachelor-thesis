@@ -1,14 +1,88 @@
 \chapter{Abstract Interpretation}
 
-\xxx{introduction}
+In this chapter we define a some mathematical concepts useful for understanding the Abstract Interpretation.
+The covered topics are be partial orderings, lattices or galois connections.
+More advanced topics connected with abstract interpretation were well covered by B.~Blanchet\cite{Blanchet:2002:AI}),
+so I would redirect the more curious readers to his article.
+
 
 \section{Introductory Example} %=======================================================================================%
 
-\xxx{introductory example}
+We start with a very simple example that shows the basic idea behind abstract interpretation.
+I do not define the syntax of the program as I assume that it is mostly clear. % todo weird
+Consider this very simple toy program:
+
+\begin{verbatim}
+
+    a = read_number()
+    b = read_number()
+    c = a + b
+    d = a * b
+    e = a * a
+    f = a - b
+    g = a / b
+
+\end{verbatim}
+
+Given the assumption that \verb|read_number()| returns one real number given by the user and does not fail, what can
+we say about the content of the variables \verb|c|, \verb|d|, \verb|e|, \verb|f| and \verb|g|?
+Not much, except the fact that \verb|e| is non-negative (it is a square) and the calculation of \verb|g| can fail
+(due to division by zero).
+We cannot even say whether the values will be greater or less than the inputs \verb|a| and \verb|b|.
+
+This, of course, changes, when we introduce additional constraints on the inputs \verb|a| and \verb|b|.
+Example of such constraints can be: \verb|Both a and b are positive|.
+What can we say about the variables then?
+\begin{itemize}
+    \item \verb|c| is positive and greater then \verb|a| and \verb|b|
+    \item \verb|d| is positive
+    \item \verb|e| is positive
+    \item \verb|f| is in the interval $(-b, a)$
+    \item \verb|g| is positive and the computation will not fail
+\end{itemize}
+
+Notice that the approximation of \verb|d| and \verb|e| would be more precise if we also said whether the inputs
+are greater or less than 1.
+
+This shows that when we know the approximations of the input values, we are able to make statements about the behaviour
+of the program.
+In abstract interpretation, we try to interpret (execute) the given program with approximated input values and try to
+prove that the output is in such bounds or that it does not crash in any (or some) case.
+Such analysis is always correct, but the results are not precise - it is an approximation of the behaviour of the program.
+Also note that this can be actually useful in practice since in many programs the variables usually are bounded due to
+their semantics.
+For example the hour of a day will always be a number between 0 and 24 (will you figure out why not just 23?),
+number of workers in a factory will be always non-negative, election results of a political party will always be
+between 0 and 100 and a sum of degrees of an undirected graph will always be an even number.
+
+But what information should we remember for the variables in the program?
+In the simplest case we can just remember whether the values are positive, negative or zero.
+More advanced case (the one that we use in the example above) can use intervals.
+Generally we use a unification of arbitrary disjunctive (for simplicity) sets.
+Then the input constraints can look like this:
+\[a \in {1, 2, 3} \cup (0, 1)\]
+\[b \in \mathbb{R}\]
+
+The idea of approximation of values with unification of sets of possible solutions can be applied to other subjects than
+just real numbers.
+Some examples:
+\begin{itemize}
+    \item Matrix operations can be approximated by dimensions of matrices and ensure that the operations
+    (matrix addition, multiplication, gaussian elimination) are correct.
+
+    \item Geometry in 2D (or higher dimensions).
+    Points can be approximated by rectangular sectors.
+
+    \item Boolean algebra
+
+    \item Tabular data - the topic of this thesis
+\end{itemize}
+
 
 \section{Lattices} %===================================================================================================%
 
-Recall the definition of partial order:
+We first recall few already well-known definitions (Poset, Supremum, Infimum, Monotonous function) and then use this
+to state the definitions of new objects (Lattice, Complete Lattice, Galois Connection).
 
 \begin{defn}[Partial order]
     Relation $\leq$ on set $S$ is an partial order if $\forall a, b, c \in P$:
@@ -25,13 +99,16 @@ Then defining a partially ordered set (Poset) is straightforward:
     The pair $(S, \leq)$ is a Poset, if $\leq$ is a partial order on $S$
 \end{defn}
 
-We will also mention few examples of Poset:
+We also mention few examples of Poset:
 
 \begin{itemize}
     \item $(\mathbb{R}, \leq), (\mathbb{Q}, \leq), (\mathbb{Z}, \leq)$ are all Posets
     \item For a set $S$, $(\mathbb{P}(S), \subseteq)$ is a Poset
+    \item Non-negative integers with divisibility are a Poset
     \item For directed acyclic graph $G=(V,E)$ the pair $(V, reachability)$ is a Poset
 \end{itemize}
+
+\xxx{monotonous function}
 
 Last thing that we need before defining a Lattice are the definitions of supremum and infimum.
 
@@ -42,14 +119,24 @@ Last thing that we need before defining a Lattice are the definitions of supremu
 
     Lower bound of $R$ in $S$ is $a \in S$ such that $\forall x \in R: a \leq x$
 
-    Supremum of $R$ in $S$ is $a \in S$ such that $a$ is a lower bound of $R$
+    Supremum of $R$ in $S$ is $a \in S$ such that $a$ is a lower bound of $R$ %todo sup() inf() symbols
 
     Infimum of $R$ in $S$ is $a \in S$ such that
 \end{defn}
 
 With this knowledge, we have all we need to define a Lattice:
 \begin{defn}[Lattice]
+    A Poset $(L, \leq)$) is a Lattice if:
+    \[\forall a, b \in L \: \exists s \in L: s = \sup(\{a,b\})\]
+    \[\forall a, b \in L \: \exists u \in L: u = \inf(\{a,b\})\]
+\end{defn}
 
+\xxx{todo comment}
+
+\begin{defn}[Complete Lattice]
+    A Poset $(L, \leq)$ is a Complete Lattice if:
+    \[\forall X \subseteq L \: \exists s \in L: s = \sup(X)\]
+    \[\forall X \subseteq L \: \exists u \in L: u = \inf(X)\]
 \end{defn}
 
 
@@ -61,7 +148,9 @@ With this knowledge, we have all we need to define a Lattice:
 
 \xxx{galois connections}
 
+
 \section{The method} %=================================================================================================%
+
 
 \section*{Summary}
 \addcontentsline{toc}{section}{Summary}
