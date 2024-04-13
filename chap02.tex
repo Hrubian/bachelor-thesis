@@ -1,12 +1,83 @@
-\chapter{Data analysis and Pandas library}
+\chapter{Data manipulation and Pandas library}
 
-\section{Data structures}
+In this chapter, our goal is to explore the world of data manipulation.
+We explain which data structures are usually used and what do the operations on them look like.
+Then we explain how Pandas, Python library for data manipulation, helps with the problem of data manipulation.
+We will need the information in next chapters when we define the Abstract Interpretation framework for these data
+structures.
+At the end of the chapter, we again mention the option based on type-systems.
+However, it is rather a brief overview than a deep dive.
 
-\section{Common operations}
 
-\section{Pandas approach}
+\section{Data structures} %============================================================================================%
 
-\section{Type-based safety options}
+When we talk about data structure, we usually define it as a way of organizing data in the computer memory.
+However, there are two concepts to distinguish - the interface and the implementation.
 
-\section*{Summary}
+The interface is a set of operations that we are allowed to do with the data structure as a users.
+Good example of a data structure interface can be an Array, List, Dictionary or a Heap.
+Implementation on the other hand is how the data structure works under the hood to provide the interface promised.
+To give an example of an implementation of a data structure I mention a binary tree, n-ary heap or a linked list.
+
+In this chapter, when talking about data structures, we omit the implementation details, and we focus only on the
+interface of the data structure i.e.\ what operations are provided.
+Also, we assume existence of the primitive data types such as integers, floating-point numbers, strings etc.
+
+
+\subsection{Series}
+
+The first and the simplest data structure is usually called Series.
+In its simplest form it is a one-dimensional data structure holding data of some primitive data type.
+It supports a List interface, so random access based on integer indexing is supported as well as adding, removing and
+modifying items.
+
+There can also be an index associated with the Series.
+The index is a set of distinct values of any elementary type (usually a string or a time) associated with the values of
+the Series.
+It expands the interface of a Series with a Dictionary interface.
+Consequently, the items can be accessed using the values in the index. \xxx{TODO a picture would be nice}
+
+Another usual feature of a Series is an optional label describing the data. \xxx{TODO explain better}
+
+
+
+\subsection{Dataframe}
+
+Dataframe is a two-dimensional tabular data structure.
+A good way to look at a Dataframe is to see it as a Dictionary, where the keys are names of a columns of a table
+and values are Series representing the columns themselves.
+This also means that the Dataframe supports indexing of columns based on column names and integer-based indexing of rows.
+
+The dataframe can alo have an index associated with the rows of Series.
+Consequently, the Dataframe supports Dictionary interface on both rows and columns.
+Adding of new columns and rows is also supported.
+\xxx{TODO picture}
+
+
+\section{Common operations} %==========================================================================================%
+
+To actually manipulate the data into some useful form, we need operations that more powerful than just indexing and
+adding and removing elements.
+The operations that are commonly used in data manipulation were greatly influenced byt the operations on relational
+databases and the SQL language.
+However, they are usually more flexible and customizable. % todo explain more
+
+% indexing (sub, one...), merge, groupby, sort, renaming, vectorized operations (sum, product)
+\subsection{SQL-inspired operations}
+
+
+\subsection{Vectorized operations}
+
+
+\section{Pandas approach} %============================================================================================%
+
+
+\section{Type-based safety options} %==================================================================================%
+
+
+\section*{Summary} %===================================================================================================%
 \addcontentsline{toc}{section}{Summary}
+
+We covered two common data structure interfaces used in data analysis - Series and Dataframe.
+Series is a one-dimensional List-like data structure with support for index and an axis label.
+Data frame is a two-dimensional
