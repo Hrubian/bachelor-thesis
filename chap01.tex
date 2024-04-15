@@ -143,6 +143,68 @@ With this knowledge, we have all we need to define a Lattice:
 \xxx{lattices}
 
 
+\section{Program semantics} % todo cite B. Blanchet
+
+To properly talk about analyzing programs, we first need to define what a program is.
+So let us start by stating few definitions regarding the syntax:
+
+\begin{defn}[Expression]
+    Expression has the following recursive definition:
+    \begin{itemize}
+        \item $\forall n \in \mathbb{Z}$, n is an expression
+        \item a variable $x$ is an expression
+        \item $\forall E, F$ expressions, the following are expressions: $E+F$, $E-F$, $E>=F$, $E \dot F$
+    \end{itemize}
+\end{defn}
+
+\begin{defn}[Statement]
+    The following are Statements:
+    \begin{itemize}
+        \item $end$
+        \item $x := E$ for variable $x$ and expression $E$
+        \item $if \: E \: goto \: n$ for expression $E$ and $n \in \mathbb{Z}$
+        \item $input \: x$ for variable $x$
+        \item $print \: E$ for expression $E$
+    \end{itemize}
+\end{defn}
+
+Then we can define a program as follows:
+
+\begin{defn}[Program]
+    Program is a function $Prog$ from integers to Statements.
+    Formally:
+    \[Prog: \mathbb{Z} \rightarrow Statements\]
+\end{defn}
+
+The connection of the formal definition of Program to the common intuition behind program works if we imagine the
+integers as the addresses in an address space for the statements. % todo explain better
+The state of the running program (process) in a given time $t$ is given by the program counter($pc$), saying which
+command is to be executed next and the set of variables in the environment.
+
+To know how the $pc$ and the variables change during the run of the program, we must define the semantics of the
+expressions and statements.
+
+\begin{defn}[Expression semantics]
+    \xxx{todo}
+\end{defn}
+
+\begin{defn} Statement semantics
+    \begin{itemize}
+        \item $end$ - ends the execution of the process
+        \item $x := E$ - sets value of variable $x$ in the environment to the result of $E$
+        \item $if \: E \: goto \: n$ - sets the $pc$ to $n$ if the result of $E$ is non-zero
+        \item $input \: x$ - sets value of variable $x$ in the environment to the user input
+        \item $print \: E$ - adds result of $E$ to the user output
+    \end{itemize}
+\end{defn}
+
+For a given program and user input, the process goes over a sequence of states.
+We call such sequence of states a \textit{trace}.
+Since the trace depends on the user input, the semantics of the program is given by the set of traces, rather than
+a single trace.
+
+% todo approximation
+
 
 \section{Galois Connections} %=========================================================================================%
 
