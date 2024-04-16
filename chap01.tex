@@ -208,7 +208,69 @@ a single trace.
 
 \section{Galois Connections} %=========================================================================================%
 
-\xxx{galois connections}
+Let us start by the definition:
+
+\begin{defn}[Galois Connection]
+    Let $L_1$ (with ordering $\leq _1$) and $L_2$ (with ordering $\leq _2$) be Lattices. % todo galois connections are usually defined on just posets
+    Also, let $\alpha: L_1 \rightarrow L_2$ and $\gamma: L_2 \rightarrow L_1$.
+    Then the tuple $(\alpha, \gamma)$ is a Galois Connection, if:
+    \[ \forall x \in L_1, \: \forall y \in L_2: \: \alpha(x) \leq_2 y \leftrightarrow x \leq_1 \gamma(y)\]
+\end{defn}
+
+So Galois Connection is basically a pair of functions connecting the two Lattices.
+We call the first lattice ($L_1$) the \textbf{concrete lattice} and the second lattice ($L_2$) the \textbf{abstract lattice}.
+Then the function $\alpha$ is called the \textbf{abstraction} and $\gamma$ is the \textbf{concretization}.
+
+In the context of abstract interpretation the concrete lattice is \xxx{todo}
+
+\subsection*{Examples of Galois Connections}
+\begin{enumerate}
+    \item Approximating real numbers with signs and zero:
+
+    The concrete lattice is $\powerset{\mathbb{R}}$ and the abstract lattice is $\powerset{\{+, -, 0\}}$ (ordered by % todo define znaceni powerset
+    inclusion).
+    The elements of abstract lattice say what signs can the corresponding element of concrete lattice have.
+    For example the set $\{+, 0\}$ represents a non-negative number and $\{+, -\}$ represents a non-zero number in the
+    concrete lattice.
+
+    The definition of abstraction function is as follows:
+    \begin{gather*}
+        \alpha(C) =\\
+        \{+ \: if \: C \: contains \: positive \: number\} \: \cup\\
+        \{- \: if \: C \: contains \: positive \: number\} \: \cup\\
+        \{0 \: if \: C \: contains \: zero\}\\
+    \end{gather*}
+
+    And the definition of concretization function is defined:
+    \begin{gather*}
+        \gamma(A) =\\
+        (-\infty, 0) \: if - \in A \: \cup\\
+        {0} \: if \: 0 \in A \: \cup\\
+        (0, \infty) \: if + \in A \: \\
+    \end{gather*}
+    % todo show that the conditions for galois connection hold
+
+    \item Boolean algebra with uncertainty
+
+    The concrete lattice is $\powerset{\{True, False\}}$, the abstract lattice is $\{True, False, None\}$.
+    Note that $None$ means We do not know. % todo add quotes to "we do not know"
+
+    Then definition of the abstraction is straightforward:
+    \begin{gather*}
+        \alpha(\{True\}) = True\\
+        \alpha(\{False\}) = False\\
+        \alpha(\{True, False\}) = None
+    \end{gather*}
+
+    And the definition of concretization:
+    \begin{gather*}
+        \gamma(True) = \{True\}\\
+        \gamma(False) = \{False\}\\
+        \gamma(None) = \{True, False\}
+    \end{gather*}
+\end{enumerate}
+
+\xxx{todo anything else?}
 
 
 \section{The method} %=================================================================================================%
