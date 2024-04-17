@@ -275,6 +275,39 @@ In the context of abstract interpretation the concrete lattice is \xxx{todo}
 
 \section{The method} %=================================================================================================%
 
+In the previous parts of this chapter, we defined Lattices.
+We defined the concrete lattice - the normal world where computer runs.
+We also defined the abstract lattice - the world where the analysis takes place.
+Then we created a semantics of the statements and the expressions in the concrete lattice.
+Finally, we connected the two worlds - concrete and abstract lattice - with Galois Connection, which allows us to
+traverse between the two.
+
+What we are still missing is the semantics of the statements and expressions in the abstract lattice.
+This is where we finally use the fact that the connection between the concrete and abstract lattice is a Galois
+Connection.
+We show that the abstract semantics can be derived from the semantics of the concrete lattice and the Galois Connection,
+which is the last piece of the Abstract Interpretation puzzle.
+We first define the abstract semantics of values, operators and environment variables.
+Then we move to the expressions and statements.
+
+\begin{itemize}
+    \item \textbf{Values}
+
+    This is the simplest case, since the abstract semantics of $n$ from concrete lattice is just $\alpha(n)$.
+
+    \item \textbf{Operators}
+
+    The abstract semantics of the operator $op$ will be (for $a$ and $b$ from abstract lattice):
+    \[a \: op \: b = \alpha(\gamma(a) \: op \: \gamma(b))\]
+    So we concretize both the elements from the abstract lattice, then apply the operation $op$ and abstract the result
+    back.
+    This seems intuitive but why is it the thing we want?
+
+
+    \item \textbf{Environment Variables}
+    \item \textbf{Expressions}
+    \item \textbf{Statements}
+\end{itemize}
 
 \section*{Summary}
 \addcontentsline{toc}{section}{Summary}
