@@ -1,8 +1,56 @@
 \chapter{Putting it all together} % TODO maybe change the name later :)
 
-\section{}
+% TODO change 'As the name of this chapter' if you change the name of the chapter
+As the name of this chapter suggests, now we put the knowledge from the previous chapters together.
+We build the Abstract Interpretation framework for data manipulation programs.
+It involves defining the concrete and abstract lattice and the galois connection between.
 
-\section{}
+Since we are mostly focusing on Pandas in Python, we assume Python environment with Pandas, specifically:
+
+\begin{itemize}
+    \item Python syntax
+    \item Standard Python data types - int, float, string, list, dictionary, tuple
+    \item Pandas is imported via \verb|import pandas as pd| statement
+\end{itemize}
+
+We also assume, unlike the Pandas, that Series are homogenous and Dataframes have homogenous columns.
+This also implies that each column of a Dataframe has an associated type.
+Let us formalize this: 
+
+\begin{defn}
+
+\end{defn}
+
+Given these assumptions, we can define a Dataframe Structure:
+
+\begin{defn}[Dataframe Structure]
+    For a Dataframe $Df$, its \textbf{Dataframe} Structure is $DS(Df) = \{(Col.name, Col.type) \: for \: each \: column \: in \: Df\}$
+\end{defn}
+
+Also, we define a Series Structure:
+
+\begin{defn}[Series Structure]
+    For a Series $Sr$, its \textbf{Series Structure} is $SS(Sr) = (Sr.name, Sr.type)$
+\end{defn}
+
+
+\section{The concrete lattice}
+
+The concrete lattice should correspond with the reality.
+
+
+\section{The abstract lattice}
+
+\section{The Galois Connection}
+
+\section{Operations}
+
+\section{Adding other types}
+
+\section{Final proposal}
+
+\section{Limitations}
+
 
 \section*{Summary}
 \addcontentsline{toc}{section}{Summary}

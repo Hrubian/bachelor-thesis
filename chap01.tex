@@ -1,7 +1,9 @@
 \chapter{Abstract Interpretation}
 
-In this chapter we define some mathematical concepts useful for understanding the Abstract Interpretation.
-The covered topics are partial orderings, lattices or galois connections.
+In this chapter we explain the Abstract Interpretation from the theoretical point of view.
+We first define some mathematical concepts useful for understanding the Abstract Interpretation and then move to the
+method itself.
+The covered topics are partial ordering, lattices, galois connections and definition of program syntax and semantics.
 More advanced topics connected with abstract interpretation were well covered by B.~Blanchet\cite{Blanchet:2002:AI},
 so I would redirect the more curious readers to his article.
 
@@ -9,7 +11,7 @@ so I would redirect the more curious readers to his article.
 \section{Introductory Example} %=======================================================================================%
 
 We start with a very simple example that shows the basic idea behind abstract interpretation.
-I do not define the syntax of the program as I assume that it is mostly clear. % todo weird
+I do not define the syntax of the programming language as I assume that it is mostly clear.
 Consider this very simple toy program:
 
 \begin{verbatim}
@@ -41,7 +43,7 @@ What can we say about the variables then?
     \item \verb|g| is positive and the computation will not fail
 \end{itemize}
 
-Notice that the approximation of \verb|d| and \verb|e| would be more precise if we also said whether the inputs
+Notice that the approximation of \verb|d| and \verb|e| would be even more precise if we also said whether the inputs
 are greater or less than 1.
 
 This shows that when we know the approximations of the input values, we are able to make statements about the behaviour
@@ -81,7 +83,7 @@ Some examples:
 
 \section{Lattices} %===================================================================================================%
 
-We first recall few already well-known definitions (Poset, Supremum, Infimum, Monotonous function) and then use this
+We first recall few already well-known definitions (Poset, Supremum, Infimum) and then use this
 to state the definitions of new objects (Lattice, Complete Lattice, Galois Connection).
 
 \begin{defn}[Partial order]
@@ -108,8 +110,6 @@ We also mention few examples of Poset:
     \item For directed acyclic graph $G=(V,E)$ the pair $(V, reachability)$ is a Poset
 \end{itemize}
 
-\xxx{monotonous function}
-
 Last thing that we need before defining a Lattice are the definitions of supremum and infimum.
 
 \begin{defn}
@@ -131,7 +131,7 @@ With this knowledge, we have all we need to define a Lattice:
     \[\forall a, b \in L \: \exists u \in L: u = \inf(\{a,b\})\]
 \end{defn}
 
-\xxx{todo comment}
+In other words, each two elements of a Lattice have a supremum and an infimum.
 
 \begin{defn}[Complete Lattice]
     A Poset $(L, \leq)$ is a Complete Lattice if:
@@ -139,13 +139,19 @@ With this knowledge, we have all we need to define a Lattice:
     \[\forall X \subseteq L \: \exists u \in L: u = \inf(X)\]
 \end{defn}
 
+This means that each subset of a Lattice has a supremum and an infimum.
+Note that this is a stronger condition than at Lattices, since pair is also a subset.
+That also means that every Complete Lattice is a Lattice.
 
-\xxx{lattices}
+
+
+\xxx{lattices - examples and which of them are complete}
 
 
 \section{Program semantics} % todo cite B. Blanchet
 
 To properly talk about analyzing programs, we first need to define what a program is.
+We define a simple syntax and then we add its semantics.
 So let us start by stating few definitions regarding the syntax:
 
 \begin{defn}[Expression]
@@ -153,7 +159,7 @@ So let us start by stating few definitions regarding the syntax:
     \begin{itemize}
         \item $\forall n \in \mathbb{Z}$, n is an expression
         \item a variable $x$ is an expression
-        \item $\forall E, F$ expressions, the following are expressions: $E+F$, $E-F$, $E>=F$, $E \dot F$
+        \item $\forall E, F$ expressions, the following are expressions: $E+F$, $E-F$, $E/geq F$, $E \bullet F$
     \end{itemize}
 \end{defn}
 
@@ -177,9 +183,9 @@ Then we can define a program as follows:
 \end{defn}
 
 The connection of the formal definition of Program to the common intuition behind program works if we imagine the
-integers as the addresses in an address space for the statements. % todo explain better
+integers as the addresses in an address space and the statements as the CPU instructions.
 The state of the running program (process) in a given time $t$ is given by the program counter($pc$), saying which
-command is to be executed next and the set of variables in the environment.
+command is to be executed next, and the set of the variables in the environment.
 
 To know how the $pc$ and the variables change during the run of the program, we must define the semantics of the
 expressions and statements.
@@ -218,10 +224,11 @@ Let us start by the definition:
 \end{defn}
 
 So Galois Connection is basically a pair of functions connecting the two Lattices.
-We call the first lattice ($L_1$) the \textbf{concrete lattice} and the second lattice ($L_2$) the \textbf{abstract lattice}.
+We call the first Lattice ($L_1$) the \textbf{concrete lattice} and the second lattice ($L_2$) the \textbf{abstract lattice}.
 Then the function $\alpha$ is called the \textbf{abstraction} and $\gamma$ is the \textbf{concretization}.
 
-In the context of abstract interpretation the concrete lattice is \xxx{todo}
+In the context of abstract interpretation the concrete lattice is a power set (ordered by inclusion) of a set of values
+of variables of the program \xxx{TODO(too many ofs)}, while the abstract lattice is the set of values we work with during the program analysis.
 
 \subsection*{Examples of Galois Connections}
 \begin{enumerate}
@@ -248,12 +255,12 @@ In the context of abstract interpretation the concrete lattice is \xxx{todo}
         {0} \: if \: 0 \in A \: \cup\\
         (0, \infty) \: if + \in A \: \\
     \end{gather*}
-    % todo show that the conditions for galois connection hold
+    \xxx{todo show that the conditions for galois connection hold}
 
     \item Boolean algebra with uncertainty
 
     The concrete lattice is $\powerset{\{True, False\}}$, the abstract lattice is $\{True, False, None\}$.
-    Note that $None$ means We do not know. % todo add quotes to "we do not know"
+    Note that $None$ means that we do not know the actual value.
 
     Then definition of the abstraction is straightforward:
     \begin{gather*}
@@ -305,8 +312,11 @@ Then we move to the expressions and statements.
 
 
     \item \textbf{Environment Variables}
+    \xxx{TODO}
     \item \textbf{Expressions}
+    \xxx{TODO}
     \item \textbf{Statements}
+    \xxx{TODO}
 \end{itemize}
 
 \section*{Summary}

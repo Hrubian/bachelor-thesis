@@ -3,7 +3,7 @@
 In this chapter, our goal is to explore the world of data manipulation.
 We explain which data structures are usually used and what do the operations on them look like.
 Then we explain how Pandas, Python library for data manipulation, helps with the problem of data manipulation.
-We will need the information in next chapters when we define the Abstract Interpretation framework for these data
+We will need the information in next chapters when defining the Abstract Interpretation framework for these data
 structures.
 At the end of the chapter, we again mention the option based on type-systems.
 However, it is rather a brief overview than a deep dive.
@@ -35,7 +35,7 @@ There can also be an index associated with the Series.
 The index is a set of distinct values of any elementary type (usually a string or a time) associated with the values of
 the Series.
 It expands the interface of a Series with a Dictionary interface.
-Consequently, the items can be accessed using the values in the index. \xxx{TODO a picture would be nice}
+Consequently, the items can be accessed using the values in the index. \xxx{TODO a schematic picture of the series}
 
 Another usual feature of a Series is an optional label describing the data. \xxx{TODO explain better}
 
@@ -51,7 +51,7 @@ This also means that the Dataframe supports indexing of columns based on column 
 The dataframe can alo have an index associated with the rows of Series.
 Consequently, the Dataframe supports Dictionary interface on both rows and columns.
 Adding of new columns and rows is also supported.
-\xxx{TODO picture}
+\xxx{TODO a schematic picture of the dataframe}
 
 
 \section{Common operations} %==========================================================================================%
@@ -80,4 +80,4 @@ However, they are usually more flexible and customizable. % todo explain more
 
 We covered two common data structure interfaces used in data analysis - Series and Dataframe.
 Series is a one-dimensional List-like data structure with support for index and an axis label.
-Data frame is a two-dimensional
+Data frame is a two-dimensional \xxx{TODO}
