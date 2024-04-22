@@ -1,17 +1,20 @@
 \chapter{Abstract Interpretation}
 
 In this chapter we explain the Abstract Interpretation from the theoretical point of view.
-We first define some mathematical concepts useful for understanding the Abstract Interpretation and then move to the
-method itself.
-The covered topics are partial ordering, lattices, galois connections and definition of program syntax and semantics.
-More advanced topics connected with abstract interpretation were well covered by B.~Blanchet\cite{Blanchet:2002:AI},
-so I would redirect the more curious readers to his article.
+At first, we recall some basic mathematical definitions such as partial ordering or supremum and infimum.
+Then we use this knowledge to define lattices and galois connections, that are the core concepts of Abstract
+Interpretation.
+We also formalize a program - its syntax, semantics, trace and collecting semantics.
+At last, we use all this knowledge to explain the Abstract Interpretation method.
+This chapter is greatly inspired by Introduction to Abstract Interpretation by B.~Blanchet\cite{Blanchet:2002:AI}.
+He also covers more advanced topics that are not needed for our purposes, so I would redirect the more curious readers
+to his article.
 
 
 \section{Introductory Example} %=======================================================================================%
 
 We start with a very simple example that shows the basic idea behind abstract interpretation.
-I do not define the syntax of the programming language as I assume that it is mostly clear.
+I do not define the syntax of the programming language for now as I assume that it is mostly clear.
 Consider this very simple toy program:
 
 \begin{verbatim}
@@ -101,14 +104,15 @@ Then defining a partially ordered set (Poset) is straightforward:
     The pair $(S, \leq)$ is a Poset, if $\leq$ is a partial order on $S$
 \end{defn}
 
-We also mention few examples of Poset:
-
-\begin{itemize}
-    \item $(\mathbb{R}, \leq), (\mathbb{Q}, \leq), (\mathbb{Z}, \leq)$ are all Posets
-    \item For a set $S$, $(\mathbb{P}(S), \subseteq)$ is a Poset
-    \item Non-negative integers with divisibility are a Poset
-    \item For directed acyclic graph $G=(V,E)$ the pair $(V, reachability)$ is a Poset
-\end{itemize}
+\begin{example}
+    We also mention few examples of Poset:
+    \begin{itemize}
+        \item $(\mathbb{R}, \leq), (\mathbb{Q}, \leq), (\mathbb{Z}, \leq)$ are all Posets
+        \item For a set $S$, $(\mathbb{P}(S), \subseteq)$ is a Poset
+        \item Non-negative integers with divisibility are a Poset
+        \item For directed acyclic graph $G=(V,E)$ the pair $(V, reachability)$ is a Poset
+    \end{itemize}
+\end{example}
 
 Last thing that we need before defining a Lattice are the definitions of supremum and infimum.
 
@@ -119,9 +123,10 @@ Last thing that we need before defining a Lattice are the definitions of supremu
 
     Lower bound of $R$ in $S$ is $a \in S$ such that $\forall x \in R: a \leq x$
 
-    Supremum of $R$ in $S$ is $a \in S$ such that $a$ is a lower bound of $R$ %todo sup() inf() symbols
+    Supremum (we use symbol $\sup$) of $R$ in $S$ is $a \in S$
+    such that $\forall a' \in R, a' \leq a, \forall a'' \in S$ \xxx{TODO}% use the lower bounds
 
-    Infimum of $R$ in $S$ is $a \in S$ such that
+    Infimum (we use symbol ($\inf$))of $R$ in $S$ is $a \in S$ such that
 \end{defn}
 
 With this knowledge, we have all we need to define a Lattice:
@@ -131,7 +136,7 @@ With this knowledge, we have all we need to define a Lattice:
     \[\forall a, b \in L \: \exists u \in L: u = \inf(\{a,b\})\]
 \end{defn}
 
-In other words, each two elements of a Lattice have a supremum and an infimum.
+In other words, Lattice is a poset, where each two elements of a Lattice have a supremum and an infimum.
 
 \begin{defn}[Complete Lattice]
     A Poset $(L, \leq)$ is a Complete Lattice if:
@@ -139,19 +144,26 @@ In other words, each two elements of a Lattice have a supremum and an infimum.
     \[\forall X \subseteq L \: \exists u \in L: u = \inf(X)\]
 \end{defn}
 
-This means that each subset of a Lattice has a supremum and an infimum.
+This means that each subset of a Complete Lattice has a supremum and an infimum.
 Note that this is a stronger condition than at Lattices, since pair is also a subset.
 That also means that every Complete Lattice is a Lattice.
 
+\begin{example}
+    All $(\mathbb{R}, \leq), (\mathbb{Q}, \leq), (\mathbb{Z}, \leq)$ are Complete Lattices. % todo why?
+
+    Also, a power set of a set with inclusion as an ordering is a Complete Lattice.
+    The supremum of a set of sets on power set can be defined as the union of the sets and the infimum can be defined as
+    their intersection.
+
+    The pair $(V, reachability)$ for a directed acyclic graph is \textbf{not} a lattice.
+    For example if we take vertices from different weakly connected components, they will not have supremum and infimum.
+\end{example}
 
 
-\xxx{lattices - examples and which of them are complete}
-
-
-\section{Program semantics} % todo cite B. Blanchet
+\section{Program semantics}
 
 To properly talk about analyzing programs, we first need to define what a program is.
-We define a simple syntax and then we add its semantics.
+We define a simple syntax, and then we add its semantics.
 So let us start by stating few definitions regarding the syntax:
 
 \begin{defn}[Expression]
@@ -159,7 +171,7 @@ So let us start by stating few definitions regarding the syntax:
     \begin{itemize}
         \item $\forall n \in \mathbb{Z}$, n is an expression
         \item a variable $x$ is an expression
-        \item $\forall E, F$ expressions, the following are expressions: $E+F$, $E-F$, $E/geq F$, $E \bullet F$
+        \item $\forall E, F$ expressions, the following are expressions: $E+F$, $E-F$, $E \geq F$, $E \cdot F$
     \end{itemize}
 \end{defn}
 
@@ -185,36 +197,46 @@ Then we can define a program as follows:
 The connection of the formal definition of Program to the common intuition behind program works if we imagine the
 integers as the addresses in an address space and the statements as the CPU instructions.
 The state of the running program (process) in a given time $t$ is given by the program counter($pc$), saying which
-command is to be executed next, and the set of the variables in the environment.
+command is to be executed next, and the set of the variables in the environment $Env$.
 
 To know how the $pc$ and the variables change during the run of the program, we must define the semantics of the
 expressions and statements.
 
 \begin{defn}[Expression semantics]
-    \xxx{todo}
+    The semantics (result) of an Expression $E$ is $[E]=$:
+    \begin{itemize}
+        \item $n$, if $E = n$
+        \item $Env[x]$, if $E = x$
+        \item $[F] + [G]$, if $E = F + G$ (similarly for $F \cdot G$, $F - G$)
+        \item $1$ if $E = F \geq G$ and $[F] \geq [G]$
+        \item $0$ if $E = F \geq G$ and $[F] < [G]$
+    \end{itemize}
 \end{defn}
 
 \begin{defn} Statement semantics
     \begin{itemize}
         \item $end$ - ends the execution of the process
-        \item $x := E$ - sets value of variable $x$ in the environment to the result of $E$
+        \item $x := E$ - sets value of variable $x$ in the environment to the value $[E]$
         \item $if \: E \: goto \: n$ - sets the $pc$ to $n$ if the result of $E$ is non-zero
         \item $input \: x$ - sets value of variable $x$ in the environment to the user input
         \item $print \: E$ - adds result of $E$ to the user output
     \end{itemize}
 \end{defn}
 
+
 For a given program and user input, the process goes over a sequence of states.
 We call such sequence of states a \textit{trace}.
 Since the trace depends on the user input, the semantics of the program is given by the set of traces, rather than
-a single trace.
+a single trace. % todo collecting semantics
+The set of all possible traces cannot be computed by the statement semantics, but something called \textbf{Collecting
+semantics}. \xxx{TODO}
 
 % todo approximation
 
 
 \section{Galois Connections} %=========================================================================================%
 
-Let us start by the definition:
+Let us this time start by the definition:
 
 \begin{defn}[Galois Connection]
     Let $L_1$ (with ordering $\leq _1$) and $L_2$ (with ordering $\leq _2$) be Lattices. % todo galois connections are usually defined on just posets
@@ -223,7 +245,7 @@ Let us start by the definition:
     \[ \forall x \in L_1, \: \forall y \in L_2: \: \alpha(x) \leq_2 y \leftrightarrow x \leq_1 \gamma(y)\]
 \end{defn}
 
-So Galois Connection is basically a pair of functions connecting the two Lattices.
+So Galois Connection is basically a pair of functions connecting the two Lattices together.
 We call the first Lattice ($L_1$) the \textbf{concrete lattice} and the second lattice ($L_2$) the \textbf{abstract lattice}.
 Then the function $\alpha$ is called the \textbf{abstraction} and $\gamma$ is the \textbf{concretization}.
 
@@ -275,9 +297,19 @@ of variables of the program \xxx{TODO(too many ofs)}, while the abstract lattice
         \gamma(False) = \{False\}\\
         \gamma(None) = \{True, False\}
     \end{gather*}
-\end{enumerate}
 
-\xxx{todo anything else?}
+    \item Reducing matrices to their dimensions:
+
+    The concrete lattice is the power set of a set of all real matrices.
+    The abstract lattice is a power set of a set of pairs of integers (r,s) representing the matrix dimensions (number
+    of rows and columns).
+
+    The definition of the abstraction is:
+    \[\alpha(M) = \{(r, s) \forall X \in M, X \in \mathbb{R}^{r \times s}\}\]
+
+    The definition of the concretization is:
+    \[\gamma(M) = \{X \forall X \in \mathbb{R}^{r \times s}, (r,s) \in M\}\]
+\end{enumerate}
 
 
 \section{The method} %=================================================================================================%
@@ -309,15 +341,24 @@ Then we move to the expressions and statements.
     So we concretize both the elements from the abstract lattice, then apply the operation $op$ and abstract the result
     back.
     This seems intuitive but why is it the thing we want?
+    We want the operations to preserve the galois connection properties, meaning that \xxx{TODO}
 
 
     \item \textbf{Environment Variables}
+
+    The variable $x \in Env$ can be abstracted to $x_a$
     \xxx{TODO}
-    \item \textbf{Expressions}
-    \xxx{TODO}
+    \item \textbf{Compound Expressions}
+
+    The abstract semantics of compound expressions (sums, products\ldots) can be obtained just by replacing the
+    concrete semantics of the operator with the associated abstract operator.
+
     \item \textbf{Statements}
     \xxx{TODO}
 \end{itemize}
+
+So how does the method work?
+We abstract
 
 \section*{Summary}
 \addcontentsline{toc}{section}{Summary}
