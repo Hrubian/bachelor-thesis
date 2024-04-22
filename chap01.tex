@@ -39,7 +39,7 @@ This, of course, changes, when we introduce additional constraints on the inputs
 Example of such constraints can be: \verb|Both a and b are positive|.
 What can we say about the variables then?
 \begin{itemize}
-    \item \verb|c| is positive and greater then \verb|a| and \verb|b|
+    \item \verb|c| is positive and greater than \verb|a| and \verb|b|
     \item \verb|d| is positive
     \item \verb|e| is positive
     \item \verb|f| is in the interval $(-b, a)$
@@ -65,8 +65,10 @@ In the simplest case we can just remember whether the values are positive, negat
 More advanced case (the one that we use in the example above) can use intervals.
 Generally we use a unification of arbitrary disjunctive (for simplicity) sets.
 Then the input constraints can look like this:
-\[a \in {1, 2, 3} \cup (0, 1)\]
-\[b \in \mathbb{R}\]
+\begin{gather*}
+    a \in {1, 2, 3} \cup (0, 1)\\
+    b \in \mathbb{R}\\
+\end{gather*}
 
 The idea of approximation of values with unification of sets of possible solutions can be applied to other subjects than
 just real numbers.
@@ -355,6 +357,22 @@ Then we move to the expressions and statements.
     concrete semantics of the operator with the associated abstract operator.
 
     \item \textbf{Statements}
+
+    \begin{itemize}
+        \item
+        If $Prog(pc) = x := E$ then
+        $pc = pc + 1$, $Env[x] = [E]_a$
+
+        \item
+        If $Prog(pc) = input x$ then
+        $pc = pc + 1$, $Env[x] = \mathbb{R}$ %todo any better estimation?
+
+        \item
+        $pc = pc + 1$
+
+        \item
+        If $Prog(pc) = if E goto n$ then
+    \end{itemize}
     \xxx{TODO}
 \end{itemize}
 
