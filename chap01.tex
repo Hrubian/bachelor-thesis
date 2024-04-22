@@ -227,9 +227,9 @@ expressions and statements.
 For a given program and user input, the process goes over a sequence of states.
 We call such sequence of states a \textit{trace}.
 Since the trace depends on the user input, the semantics of the program is given by the set of traces, rather than
-a single trace. % todo collecting semantics
-The set of all possible traces cannot be computed by the statement semantics, but something called \textbf{Collecting
-semantics}. \xxx{TODO}
+a single trace.
+We define \textbf{Collecting Semantics} as an extension of the standard semantics on the set of all user possible inputs.
+So Collecting Semantics is the semantics capable of computing the set of all possible traces.
 
 % todo approximation
 
@@ -311,6 +311,7 @@ of variables of the program \xxx{TODO(too many ofs)}, while the abstract lattice
     \[\gamma(M) = \{X \forall X \in \mathbb{R}^{r \times s}, (r,s) \in M\}\]
 \end{enumerate}
 
+Note that the set of all traces ordered by inclusion form a complete lattice. % todo any comment?
 
 \section{The method} %=================================================================================================%
 
@@ -358,7 +359,18 @@ Then we move to the expressions and statements.
 \end{itemize}
 
 So how does the method work?
-We abstract
+We abstract the user inputs and then interpret the program over the abstract lattice (hence the name Abstract
+Interpretation) using the abstract definitions of Expressions, Statements etc.
+We branch when we do not know what the next state should be (if statements).
+Then, when we want to know some property of the program, we just observe the abstract version of the variables we care
+about.
 
 \section*{Summary}
 \addcontentsline{toc}{section}{Summary}
+
+Abstract Interpretation is program analysis method.
+We can imagine it as approximating the interpretation of the program (like normal interpreters do) with incomplete
+information about the user input, branching when we do not know.
+Instead of a standard semantics of a program, we take a collecting semantics as an extension over all possible user inputs,
+and we abstract the collecting semantics via an abstraction function of Galois Connection.
+Then we interpret the program considering the abstract semantics.
