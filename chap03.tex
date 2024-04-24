@@ -15,11 +15,6 @@ Since we are mostly focusing on Pandas in Python, we assume Python environment w
 
 We also assume, unlike the Pandas, that Series are homogenous and Dataframes have homogenous columns.
 This also implies that each column of a Dataframe has an associated type.
-Let us formalize this: 
-
-\begin{defn}
-
-\end{defn}
 
 Given these assumptions, we can define a Dataframe Structure:
 
@@ -37,11 +32,55 @@ Also, we define a Series Structure:
 \section{The concrete lattice}
 
 The concrete lattice should correspond with the reality.
+Since the variables of our program are Dataframes and Series, we can imagine the set of all possible Dataframes and
+Series (with every finite number of rows/columns and all possible values).
+Then we define the concrete lattice as the power set of this set with the inclusion being the ordering. % todo chaotic
+To formalize this:
+
+\begin{defn}[The concrete lattice]
+
+    Let $C = \{\forall df \: Dataframe: df\} \cup \{\forall sr \: Series: sr\}$.
+    Then the concrete lattice is $L_c = (\powerset{C}, \subseteq)$
+\end{defn}
 
 
 \section{The abstract lattice}
 
+The abstract lattice can be chosen by us depending on how much we want to abstract the values.
+We would like the abstraction to be actually useful in practice.
+What does this mean?
+In the Abstract Interpretation, whenever we should get a value from the user, we approximate it by the supremum of our
+lattice.
+This is usually done when we do not know anything about the input, since it is the most precise approximation that is
+still sound.
+However, we can do something smarter.
+We will create and use the assumption that whenever the user inputs a Dataframe, the Column Structure of that Dataframe
+is known in advance.
+This is not very strong assumption in practice given the fact that the structure of the dataframe is usually known
+during the process of writing the program anyway - otherwise we would not be able to write the program at all.
+
+So the abstract lattice is built from the Dataframe Structures and Series Structures.
+We take the set of all possible Dataframe Structures and Series Structures.
+Then the abstract lattice is the power set of that set with the inclusion being the ordering.
+We again formalize this:
+
+\begin{defn}[The abstract lattice]
+
+    Let $A = \{\forall df\: Dataframe: DS(df)\} \cup \{\forall sr \: Series: SS(sr)\}$.
+    Then the abstract lattice is $L_a = (\powerset{A}, \subseteq)$ % todo prettier
+\end{defn}
+
 \section{The Galois Connection}
+
+To create a Galois Connection we need an abstraction function and a concretization function.
+
+In the abstraction function, we start with a set of Dataframes and want a set of Dataframe Structure.
+The most natural way to define the function is to take the set of Dataframe Structures of the Dataframes from the input.
+Formally:
+
+\begin{defn}[Abstraction]
+\end{defn}
+
 
 \section{Operations}
 
