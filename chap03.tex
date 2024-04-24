@@ -149,6 +149,11 @@ It can then be extended to the set variants in a straightforward way. \xxx{TODO 
     \item JOIN (merge)
 
     The JOIN is more interesting.
+    The input is two DataframeStructures, type of join and related column names.
+    The output should be the DataframeStructure of the joined Dataframe.
+
+    \item GROUP BY
+
 
 
     \item \xxx{TODO add some vectorized operations too}
@@ -160,10 +165,23 @@ It can then be extended to the set variants in a straightforward way. \xxx{TODO 
 
 \section{Adding other types}
 
+So far, our framework only works with the Dataframe and Series types.
+Usually, however, these are not the only types in our program.
+We should also be able to work with normal ints, strings, lists, dictionaries or tuples.
+
+We will also abstract these types but in a slightly different way.
+
 \section{Final proposal}
+
+\xxx{TODO merge the "adding other types" together with the Dataframe/Series framework}
 
 \section{Limitations}
 
+\xxx{
+TODO mention the limitations of the analysis:
+pivoting, transpose,
+spreading of an unknown value
+}
 
 \section*{Summary}
 \addcontentsline{toc}{section}{Summary}
