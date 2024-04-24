@@ -74,11 +74,37 @@ We again formalize this:
 
 To create a Galois Connection we need an abstraction function and a concretization function.
 
-In the abstraction function, we start with a set of Dataframes and want a set of Dataframe Structure.
-The most natural way to define the function is to take the set of Dataframe Structures of the Dataframes from the input.
+In the abstraction function, we start with a set of Dataframes and Series, and we want a set of Dataframe Structures and
+Series Structures.
+The most natural way to define such function is to take the set of Dataframe Structures (Series Structures) of the
+Dataframes (Series) from the input.
 Formally:
 
-\begin{defn}[Abstraction]
+\begin{defn}[Abstraction function]
+    \begin{gather*}
+        \forall X \in L_c \\
+        X_{df} = \{df \in X: \: df \: is \: Dataframe\} \\
+        X_{sr} = \{sr \in X: \: sr \: is \: Series\} \\
+        \alpha(X) = \{DS(df) \forall df \in X_{df}\} \cup \{SS(sr) \forall sr \in X_{sr})\}
+    \end{gather*}
+\end{defn}
+
+Then we need the Concretization function.
+We will define it analogously.
+We have a set of Dataframe Structures and Series Structures on the input and want a set of Dataframes and Series
+on the output.
+So we just take all possible Dataframes (Series) with the given Dataframe (Series) Structure.
+
+\begin{defn}[Concretization function]
+    \begin{gather*}
+        \forall X \in L_a \\
+        X_{df} = \{df \in X: \: df \: is \: Dataframe Structure\} \\
+        X_{sr} = \{sr \in X: \: sr \: is \: Series Structure\} \\
+        \alpha(X) =
+        \bigcup_{dfs \in X_{df}}  \{df: df \: is \: Dataframe \land DS(df) = dfs\}
+        \cup \\
+        \bigcup_{srs \in X_{sr}} \{sr: sr \: is \: Series \land SS(sr) = srs\}
+    \end{gather*}
 \end{defn}
 
 
