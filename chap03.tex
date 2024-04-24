@@ -107,8 +107,56 @@ So we just take all possible Dataframes (Series) with the given Dataframe (Serie
     \end{gather*}
 \end{defn}
 
+\xxx{TODO prove that this is a galois connection}
 
-\section{Operations}
+\section{Abstract Operations}
+
+In the first chapter we mentioned that the abstract semantics can be systematically derived from the galois connection
+and the concrete semantics.
+However, it is often not the best way to get to the abstract semantics.
+We do an alternative approach.
+We define the operations ourselves, since it is a very intuitive process. % todo weird :)
+We do not define all the operations that we introduced in the previous chapter, we take a subset of them and left the
+rest to the reader as an exercise.
+
+We also define the operations rather on the single Dataframe (Series) Structures rather than on the sets, since it is
+easier to understand.
+It can then be extended to the set variants in a straightforward way. \xxx{TODO explain}
+
+\begin{itemize}
+    \item SELECT
+
+    The first operation we will abstract is a simple SELECT\@.
+    We are abstracting selection of a subset of columns given their names.
+    This is easy: We take our Dataframe Structure and remove all columns that do not have the names in the selection.
+    \begin{example}
+
+        Input: DataFrameStructure(column1: int, column2, string, column3: bool), select([column1, column3])
+
+        Output: DataFrameStructure(column1: int, column3: bool)
+    \end{example}
+    In a real analysis we should check that all column name specified in select exist in the DataFrameStructure and
+    announce an error if the opposite is true.
+
+    \item WHERE
+
+    The WHERE operation has the nice property that it does not change the Dataframe Structure.
+    So we just return the input DataframeStructure.
+    In a real analysis we should also check that the column referenced in the predicate exists in the DataFrameStructure
+    and the comparison happens between compatible types - we should probably announce an error if we are trying to compare
+    a number to a string.
+
+    \item JOIN (merge)
+
+    The JOIN is more interesting.
+
+
+    \item \xxx{TODO add some vectorized operations too}
+
+
+\end{itemize}
+
+
 
 \section{Adding other types}
 
