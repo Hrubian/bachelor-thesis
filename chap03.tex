@@ -39,7 +39,10 @@ To formalize this:
 
 \begin{defn}[The concrete lattice]
 
-    Let $C = \{\forall df \: Dataframe: df\} \cup \{\forall sr \: Series: sr\}$.
+    Let
+    \begin{gather*}
+        C = \{\forall df \: Dataframe: df\} \cup \{\forall sr \: Series: sr\}
+    \end{gather*}
     Then the concrete lattice is $L_c = (\powerset{C}, \subseteq)$
 \end{defn}
 
@@ -66,8 +69,9 @@ We again formalize this:
 
 \begin{defn}[The abstract lattice]
 
-    Let $A = \{\forall df\: Dataframe: DS(df)\} \cup \{\forall sr \: Series: SS(sr)\}$.
-    Then the abstract lattice is $L_a = (\powerset{A}, \subseteq)$ % todo prettier
+    Let
+    \[A = \{\forall df\: Dataframe: DS(df)\} \cup \{\forall sr \: Series: SS(sr)\}\].
+    Then the abstract lattice is $L_a = (\powerset{A}, \subseteq)$
 \end{defn}
 
 \section{The Galois Connection}
@@ -161,27 +165,94 @@ It can then be extended to the set variants in a straightforward way. \xxx{TODO 
 
 \end{itemize}
 
-
-
 \section{Adding other types}
 
 So far, our framework only works with the Dataframe and Series types.
 Usually, however, these are not the only types in our program.
-We should also be able to work with normal ints, strings, lists, dictionaries or tuples.
+Additionally, there are operations that accept Dataframe or Series and return other types.
+So we should also be able to work with normal ints, strings, lists, dictionaries or tuples.
 
-We will also abstract these types but in a slightly different way.
+We also abstract these types but in a slightly different way.
+For example for a string, we do not remember some kind of abstract structure.
+Rather we try to remember the whole string if it is possible.
+If it is not possible (we are not able to construct the string due to missing information), we just remember that the
+variable is a string with some unknown value (and we do not constraint the value in any way).
+This could be done better but that is outside the scope for this thesis.
+
+Ints or floats are handled in a similar way, but there is a difference in handling lists, dictionaries and tuples.
+We explain the concept on lists.
+In a situation when we are able to reconstruct the items of a list, we remember the whole list together with its items.
+If there is an item that we are not able to reconstruct, but we know that it is there, then we remember a marker
+structure called Unresolved Structure.
+And if we are not able to resolve the items of the list at all (not even their count), then we remember just the
+information that variable is a list (and we do not constraint the content of the list in any other way).
 
 \section{Final proposal}
 
-\xxx{TODO merge the "adding other types" together with the Dataframe/Series framework}
+The only task that is left for us to finish the analysis framework is to combine the Dataframe and Series framework
+with the general abstraction proposed for other types (ints, strings, lists, \ldots).
+
+We design a hierarchy of abstract types.
+The higher levels of the hierarchy contain less precise (more abstract) types and the preciseness increases as we go
+down the hierarchy.
+There is the Unresolved Structure at the top of the hierarchy representing some value that we know nothing about (only
+that it exists).
+In the next level of the hierarchy we enrich the unknown value with type, meaning that we remember that the value
+is a string (int, list, Dataframe, \ldots) but we do not know anything else.
+The last level represents different type of knowledge for different types, specifically:
+
+\begin{itemize}
+    \item For elementary types (string, int, float) it is a complete knowledge of the value.
+    \item For Dataframe and Series it represents knowledge of the Dataframe Structure or Series Structure.
+    \item For compound types (list, dictionary, tuple) we know their size and for each of them we remember some level
+    of abstraction from the hierarchy
+\end{itemize}
+
+The Figure~\ref{fig:abstract_hierarchy} shows the idea.
+The Value means a specific value such as string literal or a number.
+The Content represents an abstract type in the hierarchy.
+
+\begin{figure}[H]
+    \caption{Abstract structures hierarchy}
+    \label{fig:abstract_hierarchy}
+    \centering
+    \includegraphics[scale=0.5]{img/Hierarchy}
+\end{figure}
+
+\xxx{TODO this is actually just a semi-lattice? but we do not need the opposite bound}
+There is another type called Nondeterministic Structure.
+It is a structure holding two sub-structures, representing two options of how the structure could look.
+This is useful for example when we know that the structure can be either a Some Series or a Some List.
+In that case we would normally need to use the supremum - Unresolved Structure, but now we can just use
+\verb|NondeterministicStructure(Some Series, Some List)|.
+Other case when this can be useful is when we have two (or more by nesting many Nondeterministic Structures)
+possibilities what a Dataframe Structure could look like.
+This will mostly happen when there is a branching (if-statement) in the program, and we are not able to resolve
+which branch we should go.
+So the Nondeterministic Structure is a substitute that we need to use since we do not use the power set as the abstract
+lattice anymore.
+
 
 \section{Limitations}
 
-\xxx{
-TODO mention the limitations of the analysis:
-pivoting, transpose,
-spreading of an unknown value
-}
+The presented framework has some limitations that are important to discuss.
+First, remembering just a Dataframe Structure prevents us from doing operations, that have the resulting Dataframe
+Structure dependent on the values in a Dataframe.
+Example of such operation can be the pivot operation.
+The result of a pivot operation has columns named after values from a selected column.
+But we do not know these values, since we only remember the Dataframe Structure.
+Another example of an operation, that we are unable to resolve the resulting Dataframe of is a transpose.
+The transpose function flips the whole dataframe along the diagonal (like with matrices), so the columns of the result
+will be the rows of the original Dataframe and the column names of the result will be the index values of the original.
+But, again, we do not know the index values.
+In such situation there is no other option then just returning Some Dataframe.
+
+Another possible problem can be an unknown value propagation, meaning that when there is a value with any uncertainty
+(e.g.\ Unresolved Structure or Some value), using this value in an operation will in most cases lead to an operation
+result with an uncertainty as well.
+
 
 \section*{Summary}
 \addcontentsline{toc}{section}{Summary}
+
+\xxx{TODO :)}
