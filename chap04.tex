@@ -1,8 +1,73 @@
 \chapter{Pandalyzer}
 
-\section{Functionality}
+Our goal for this chapter is to present the implementation of the analysis tool based on the Abstract Interpretation
+framework proposed in the previous chapter.
+As the chapter name suggests, we named the tool Pandalyzer.
+
+We start by stating the goal of the implementation - what features and functionalities should the tool have.
+Then we present the architecture of the implemented solution from the software engineering point of view.
+We talk about some design decisions done and discuss what are their consequences.
+At last, we show how to build and run the tool and how it can be configured, and we also check whether solution satisfied
+the goal stated at the beginning of the chapter.
+
+
+\section{The Goal}
+
+The implementation of an analyzer of a Pandas (Python) code based on Abstract Interpretation is a very
+broad assignment specification, so we need to set some scope limitations for our implementation.
+We do not want to support all Python language constructs and features as that would result in a full-blown Python
+interpreter implementation which is definitely out of scope for this thesis.
+On the other hand, our solution should be useful in practice, so the often used Python constructs should be supported.
+This means that we definitely want to support assignments, function definitions and calling with return values and
+arguments, unary and binary operators, if-statements, constants and variables of various types.
+However, the implementation does not have to support classes, list comprehensions, lambdas, match statements, async code
+or slices in a subscript operator, although the code should be extensible enough so that these constructs can be added
+in the future development.
+
+
+We also do not want to support all Pandas features as Pandas is a large project with very complex
+(and sometimes inconsistent) API\@.
+What we want to support are, again, the common features such as merging, grouping and aggregations, selection of
+subset columns, renaming of columns and creating DataFrames and Series from lists or dictionaries.
+We also want to support reading the DataFrames from a csv or other file formats in some way.
+Less frequently used operations do not have to be supported, but the set of pandas operations should be easily
+extensible with other operations.
+
+The tool can be implemented as a command-line application and a user should be able to build and run it on Linux,
+Windows and macOS\@.
+It should accept a single python script filename as an argument and should print the analysis result to standard output
+or a file.
+The output format should be configurable.
+
+Another requirement is the ability to continue in the analysis when a mistake in the code is found and the ability
+to handle also mistakes that are not related to Pandas but pure Python. % todo weird
+
+Pandas Dataframes are usually loaded from a csv files and also written to csv files.
+The analyzer should not read or create any csv files.
+It should accept an information from the user about existing csv files and the analysis result should contain
+information about which csv files would be created by the script and what would be their structure.
 
 \section{Architecture}
+
+The programming language chosen for the implementation is Kotlin~\cite{kotlinDocs}.
+The project uses Gradle~\cite{gradleDocs} as a build system, and it runs on JVM~\cite{jvmSpec}\@.
+The source code can be found in the Pandalyzer git repository~\cite{pandalyzer}.
+
+\subsection{The high-level idea}
+
+Let us go over what the tool does.
+It loads the Python script from the given input file.
+Then it parses the code and creates and abstract syntax tree (AST) of the module.
+Then it goes over the statements in the body of the module and interprets them while keeping the current context
+containing all currently active variables, raised errors and warnings, etc.
+Finally, it writes the result of the analysis to the standard output or to an output file (if provided).
+
+\xxx{TODO say there is a lot to be resolved}
+
+\subsection{Design Decision - Parsing}
+
+\subsection{Design Decision - Configuration file}
+
 
 \section{User documentation}
 
