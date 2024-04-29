@@ -62,12 +62,164 @@ Then it goes over the statements in the body of the module and interprets them w
 containing all currently active variables, raised errors and warnings, etc.
 Finally, it writes the result of the analysis to the standard output or to an output file (if provided).
 
-\xxx{TODO say there is a lot to be resolved}
+The text above is a good short description of the tool, but it probably leaves the reader with many questions unresolved,
+such as:
+\begin{itemize}
+    \item How is the tool run?
+    \item How is the parsing done?
+    \item How is the AST represented in the program?
+    \item How are the currently active variables and other data represented in the context?
+    \item How are the Pandas operations and other function checking implemented?
+    \item What does the output of the tool look like?
+    \item How does the tool accept the additional information about the input csv files?
+    \item How does the tool handle non-deterministic or unknown data?
+\end{itemize}
 
-\subsection{Design Decision - Parsing}
+Our aim now is to answer all these (and other) questions and explain the implementation in more detail.
+
+\subsection{Design Decision - Parsing and AST}
+
+The tool needs to construct and abstract syntax tree of a Python module.
+Implementing a Python parser from scratch would be a lot of unnecessary work and a potential source of bugs, so we
+decided to use already existing solutions.
+There is a Python module called \textbf{ast}~\cite{python-ast} capable of parsing a python module and creating an
+abstract syntax tree.
+However, since it is a Python module, we are not able to use it in Kotlin directly.
+We choose an alternative approach.
+We create a Python script that accepts a Python module, creates an abstract syntax tree using the \textbf{ast} module
+and serializes the tree to a json format.
+Then we use Kotlin Serialization~\cite{kotlin-serialization-guide} library to deserialize the json to the kotlin
+representation.
+The Python script can be found in the Pandalyzer repo~\cite{pandalyzer} in the path
+/src/main/resources/python\_converter.py and uses serialization ideas from the ast2json Python module~\cite{ast2json}.
+To avoid the need to run the converter script before running the Pandalyzer, the Pandalyzer calls the script instead of
+the user, effectively hiding the information about the existence of the script from the user.
+However, the fact that we use Python script implies that the python needs to be installed on the machine.
+
+\begin{figure}[H]
+    \caption{AST representation hierarchy}
+    \label{fig:python_hierarchy}
+    \centering
+    \includegraphics[scale=0.5]{img/python_hierarchy}
+\end{figure}
+
+
+The AST representation in Kotlin uses hierarchy of classes and interfaces.
+The figure~\ref{fig:python_hierarchy} shows a subset (the whole hierarchy is much larger) of the classes (yellow boxes),
+and interfaces (blue boxes).
+
+Each class represents a node in the abstract syntax tree.
+The nodes of the tree have children depending on their semantics.
+For example the node Module has a list of nodes Statements representing the body of the module.
+Another good example is an IfStatement, which has test Expression as a child, list of statements as the body of the
+if-statement and another list of statements as the body of the else branch.
+
+Additionally, each node implementing the Statement interface has also information about the location of the statement
+in the script file - line numbers and column numbers.
+
+\subsection{Analysis Context}
+
+When traversing the AST and interpreting the program, we have to keep track of all currently known variables.
+Also, want to store the errors and warnings generated.
+We introduce the Analysis Context structure for this purpose.
+In the implementation, AnalysisContext is an interface providing us with function such as getStruct, upsertStruct,
+addWarning, addError and more.
+There are two classes implementing this interface - GlobalAnalysisContext and FunctionAnalysisContext.
+
+GlobalAnalysisContext is the context that keeps track of all global variables and functions and python builtin functions
+as well.
+It also contains metadata about the csv files that we read from and write to.
+
+FunctionAnalysisContext on the other hand is created when a function is invoked.
+It contains a reference to outer analysis context and a global analysis context.
+It redirects the addWarning and addError function to the outer analysis context, and it also redirects the getStruct
+function to the global analysis context in case that it does not know the requested variable.
+This ensures that the concept of global and local variables works properly.
+
+When the analysis is done, the global analysis context has a summarize function, which returns a summary of the analysis.
+
+
+\xxx{TODO}
+
+\subsection{Python structures representation}
+
+When we discussed the Analysis Context, we said that it keeps all currently active variables.
+But how does a statically typed language like Kotlin keeps track of variables that have type resolved dynamically in
+runtime?
+
+The answer is polymorphism.
+We define the interface PythonDataStructure.
+Every Python data type has to implement the PythonDataStructure interface.
+The interface contains methods representing what we can do with any Python data type.
+There are functions for the implementation of binary operators such as add, subtract, multiply, etc., unary operators
+such as unary plus or unary minus, subscript function (the square bracket operator), the invoke function
+(the parenthesis operator) and the attribute function (used for the dot notation).
+%There is also a boolValue function
+
+All these functions return the following type:
+\begin{verbatim}
+   OperationResult<PythonDataStructure>
+\end{verbatim}
+So the operations return a PythonDataStructure, but it is wrapped inside the OperationResult.
+The OperationResult is a sealed interface (meaning that all who implement the interface must be known at compile time).
+There are three classes implementing the OperationResult interface: OK, Warning and Error.
+OK signalizes that the operation succeeded, and it contains the result PythonDataStructure.
+Warning tells us that the operation was successful but some warnings were raised during the execution.
+The Warning type contains the result PythonDataStructure and a list of warnings - strings.
+Last type is the Error.
+It tells us that the operation failed, and it also provides a reason string.
+
+We said that every Python data type has to implement the PythonDataStructure interface.
+But what types do we define?
+There are standard Python types such as PythonString, PythonInt, PythonBool, PythonNone, PythonList or PythonDict.
+There are also functions (yes, function is also a PythonDataStructure).
+This includes (subset of) Python builtin
+functions such as \verb|print, list, len, int, or abs| as well as other functions defined in the current scope.
+Another things that also implement the PythonDataStructure are imports.
+Currently, the only supported import is PandasImport, but the implementation can be easily extended by others.
+The Pandas data types support is added by creating DataFrame and Series classes that also implement the PythonDataStructure
+interface.
+
+
+\subsection{Nondeterminism, unknown values and error recovery}
+
+\xxx{TODO null values, NondeterministicStructures, UnresolvedStructures, fork-join pattern on analysis context}
+
 
 \subsection{Design Decision - Configuration file}
 
+When we defined the goals of the implementation, we mentioned the fact that Pandas Dataframes are usually loaded
+from a csv file.
+We stated a requirement that the analyzer should not try to read the file.
+The analyzer should instead receive the information about the csv file structures from the user in some other way.
+This has the advantage that the csv files do not have to exist at all yet during the analysis as long as we know their
+structure.
+
+This, however, raises a question: How should the Pandalyzer receive the information from the user?
+The following options were considered:
+\begin{itemize}
+    \item The user specifies the csv structures as a command-line arguments
+
+    This was not accepted since it is not practical for the case when the set of csv files is bigger or the csv files
+    have many columns.
+
+    \item The user adds the information straight to the Python code via some annotation or nop operation
+
+    This was also rejected since the user has to make changes to the code, and it could make the code less readable.
+
+    \item The tool will ask the user for the information once it recognizes the read\_csv function
+
+    The problem with this approach is that it needs a lot of interaction with the user, and it complicates automatic
+    execution of the analysis.
+
+    \item The user will provide a configuration file with the csv structures
+
+    This approach has the advantage that it is relatively easy to specify many files that have many columns.
+    Also, the configuration can be written just once in a whole project and be a part of the repository.
+    So we chose this approach in the implementation.
+\end{itemize}
+
+\xxx{TODO the format that is not exactly toml but similar}
 
 \section{User documentation}
 
