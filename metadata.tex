@@ -49,20 +49,18 @@
 
 % Abstract (recommended length around 80-200 words; this is not a copy of your thesis assignment!)
 \def\Abstract{%
-\xxx{TODO rewrite the abstract}
-Abstract interpretation is an approximation method for analyzing semantics of computer programs.
-It systematically interprets the program semantics over an abstract domain which is
-connected with the original (concrete) domain by a galois connection.
-The method is widely used in compilers for finding optimization opportunities or as a
-certification against certain types of bugs.
-The method could be also useful for analysis of data-analysis programs, where the most
-popular languages are dynamic languages Python and R. The resulting programs are
-usually error-prone, since the dynamic languages lack any checks before the actual run
-of the program.
-The goal of this paper is to explore the possibility to use abstract interpretation
-to analyze data-analysis programs working with tabular data and to implement a proof-of-concept
-implementation of the idea for pandas library in python.
-+ evaluation
+Pandas is a Python library widely used for data-manipulation.
+The code written with Pandas lacks any type-safety and everything is decided at runtime.
+This can potentially be a source of errors and crashes at runtime.
+One way to deal with that is to use other, type-safe, language and a library with better safety guarantees and
+compile-time checks.
+This approach is not widely used as it is not very user-friendly.
+An alternative approach could be to use program verification method Abstract Interpretation to perform some checks
+before the run of the program.
+The goal of this thesis is to design a framework for analyzing data-manipulation programs and implement an analyzer
+for the Pandas library.
+The framework will be based on the Abstract Interpretation.
+The capabilities of the resulting analyzer will be evaluated on a set of small but realistic case studies.
 }
 
 % 3 to 5 keywords (recommended) separated by \sep
