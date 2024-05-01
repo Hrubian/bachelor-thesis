@@ -183,9 +183,31 @@ interface.
 
 \subsection{Nondeterminism, unknown values and error recovery}
 
+There are three ways in which we handle some uncertainty.
+The first one corresponds to the SomeString/SomeList/\ldots structures mentioned in the previous chapter.
+Recall that these structures represent the knowledge of the type but the absence of the knowledge of the value.
+In the implementation of Pandalyzer, this concept is represented by the fact that the values inside PythonString,
+PythonList, \ldots are nullable.
+In other words the PythonString(value=null) represents a string with unknown value.
+
+The second form of uncertainty is the Nondeterministic data structure (also defined in the previous chapter).
+This is uncertainty between two possible values.
+In the implementation of Pandalyzer, this is represented by NondeterministicStructure with left and right
+PythonDataStructure.
+The NondeterministicStructure(left=PythonList([]), PythonInt(7)) represents a value that is either an empty list or a
+number 7.
+When we perform and operation on this structure, it internally performs the operation on both options and then
+returns both results wrapped in a new NondeterministicStructure.
+
+The last form of uncertainty is the UnresolvedStructure (also defined in the previous chapter).
+It simply means that we do not know at all what the value is.
+It happens when there is an error, and it is a part of the error recovery mechanism of the analyzer.
+When we try to do an operation that is not permitted, the result of that operation is the UnresolvedStructure with
+reason inside.
+The reason is then added to the list of all errors.
 
 
-\xxx{TODO null values, NondeterministicStructures, UnresolvedStructures, fork-join pattern on analysis context}
+\xxx{fork-join pattern on analysis context on if-statements}
 
 
 \subsection{Design Decision - Configuration file}
