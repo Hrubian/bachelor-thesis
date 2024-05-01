@@ -16,12 +16,113 @@ Each case study contains:
     \item
 \end{itemize}
 
-\paragraph{Case Study \#1:} Hello world :) \\
-Hello world
+\paragraph{Case Study \#1:} Multiple operations, multiple datasets, no uncertainty  \\
 
-\paragraph{Case Study \#2:} Hello world :) \\
-Hello world
+In the first case study we work with a data from sport competitions agency.
+We get a csv file with competitions that they organized.
+We also get a csv file with all attendees of these competitions.
+Last file contains information about the number of points that an attendee got from a specific competition.
 
+The \verb|config.toml| (and the csv column structure) is shown in the listing~\ref{lst:cs1_config}
+
+\begin{lstlisting}[caption=config.toml of the first case study, label={lst:cs1_config}, captionpos=b]
+[attendees.csv]
+name = "string"
+surname = "string"
+age = "int"
+
+[matches.csv]
+id = "int"
+name = "string"
+
+[scores.csv]
+name_surname = "string"
+match_id = "int"
+score = "int"
+\end{lstlisting}
+
+Our goal is to create a csv file called top\_two\_per\_age.csv that contains the top two attendees per age per sport match
+together with the sport match name.
+
+The listing~\ref{lst:cs1_code} shows how that could be implemented in Pandas.
+
+\begin{lstlisting}[caption=Solution of the first case study in Pandas, label={lst:cs1_code}, captionpos=b]
+import pandas as pd
+
+attendees_df = pd.read_csv("attendees.csv")
+matches_df = pd.read_csv("matches.csv") \
+    .rename(columns={"name": "match_name"})
+scores_df = pd.read_csv("scores.csv")
+
+attendees_df["name_surname"] = \
+    attendees_df["name"] + "_" + attendees_df["surname"]
+attendees_df = attendees_df.drop(columns=["name", "surname"])
+
+scores_with_match_name_df = scores_df \
+    .merge(matches_df, left_on="match_id", right_on="id") \
+    .drop(columns="id")
+
+scores_with_age_df = pd.merge(
+    scores_with_match_name_df, attendees_df, on="name_surname"
+)
+
+top_two_per_age_df = scores_with_age_df \
+    .sort_values("age") \
+    .groupby(["age", "match_name"]) \
+    .head(2) \
+    .drop(columns=["match_id"])
+
+top_two_per_age_df.to_csv("top_two_per_age.csv")
+\end{lstlisting}
+
+\xxx{TODO what is tricky about this example, what does the analyzer say, what mistakes can we do, does analyzer spot them? how?}
+
+
+\paragraph{Case Study \#2:} Uncertainty from the user, multiple possible values \\
+
+Next case study.
+
+
+\paragraph{Case Study \#3:} Regex config, column compatibility \\
+
+Now we have a set of files 30\_04\_2024\_production.csv and 31\_04\_2024\_production.csv that contain per-hour production
+of some factory on a given day.
+We are interested in hours when the production was lower than 400 items.
+This time we use the regex feature of our configuration.
+The \verb|config.toml| file will be as shown in listing~\ref{lst:cs3_config}.
+
+\begin{lstlisting}[caption=config.toml of the second case study, label={lst:cs3_config}, captionpos=b]
+[^\d{2}_\d{2}_\d{4}_production\.csv$]
+hour = "int"
+production = "int"
+note = "string"
+\end{lstlisting}
+
+The record in the \verb|config.toml| file says that all the csv files with the name dd\_mm\_yyyy\_production.csv have the
+specified columns structure.
+The regex feature is useful for large amount of same-structured files with similar names (different only in date,
+number etc.).
+
+The code solving this problem can be seen in Listing~\ref{lst:cs3_code}
+
+\begin{lstlisting}[caption=Solution of the third case study in Pandas, label={lst:cs3_code}, captionpos=b]
+import pandas as pd
+
+tuesday_df = pd.read_csv("30_04_2024_production.csv")
+wednesday_df = pd.read_csv("31_04_2024_production.csv")
+
+tuesday_df.insert(0, "day", 30)
+wednesday_df.insert(0, "day", 31)
+
+agg_df = pd.concat([tuesday_df, wednesday_df])
+
+low_production_df = agg_df[agg_df["production"] < 400]
+
+low_production_df.to_csv("aggregate_production.csv")
+\end{lstlisting}
+
+\paragraph{Case Study \#4:} High uncertainty, user input \\
+This time we focus on
 
 
 \section*{Summary}

@@ -183,6 +183,8 @@ interface.
 
 \subsection{Nondeterminism, unknown values and error recovery}
 
+
+
 \xxx{TODO null values, NondeterministicStructures, UnresolvedStructures, fork-join pattern on analysis context}
 
 
@@ -219,9 +221,78 @@ The following options were considered:
     So we chose this approach in the implementation.
 \end{itemize}
 
-\xxx{TODO the format that is not exactly toml but similar}
+The format of the configuration file can be best explained by an example.
+
+\begin{lstlisting}[caption=An example configuration file, label={lst:config_example}, captionpos=b]
+[file.csv]
+column1 = "string"
+column2 = "int"
+
+[file2.csv]
+columnA = "int"
+columnB = "int"
+columnC = "int"
+\end{lstlisting}
+
+As seen in the Listing~\ref{lst:config_example}, the format is inspired by a well known configuration format
+TOML~\cite{toml_spec}.
+We chose TOML because of its excellent readability.
+However, we do not use the TOML language but only a small modified subset.
+Definition of each file structure begins with a line containing the (relative or absolute) path to the file in the file
+system surrounded by square brackets.
+Note that this is already not a TOML, since the path to file can also contain dots or slashes which is not permitted in
+TOML specification.
+Following lines contain the specification of columns starting with column name, then equal sign and then the type of the
+column surrounded by double quotes.
+
+Other feature of the configuration is the regex-based file definition.
+When we prepend the line containing definition of new file structure with the letter \verb|r|, the filename is
+considered a regex pattern and each file matching the pattern will have the defined structure.
+The idea is shown in the Listing~\ref{lst:regex_example}.
+
+\begin{lstlisting}[caption=An example regex-based file definition, label={lst:regex_example}, captionpos=b]
+r[^\d\d_file\.csv]
+col = "string"
+\end{lstlisting}
+
+This means that files with names such as 01\_file.csv, 02\_file.csv, 99\_file.csv have one column of type string.
 
 \section{User documentation}
+
+\subsection{Building from source}
+
+To build the Pandalyzer from sources, follow the steps below:
+\begin{enumerate}
+    \item Ensure that you have JDK (version \xxx{todo version}), Gradle (version \xxx{todo version}), Git
+    and Python 3.x installed.
+    \item Clone the Pandalyzer repository:
+
+    \verb|git clone https://github.com/Hrubian/Pandalyzer.git|
+    \item Navigate to the root folder of the repository:
+
+    \verb|cd Pandalyzer|
+    \item Run the Gradle bootstrap script:
+
+    \verb|./gradlew build| or \verb|./gradlew.bat build| on Windows
+\end{enumerate}
+
+\subsection{Running the tool}
+
+The build generates a .jar file \xxx{TODO where}.
+This file can be run with the following command:
+\verb|java --jar \xxx{todo file path}|.
+The program accepts the following command-line arguments:
+\begin{itemize}
+    \item -h, --help - Prints usage information and exits
+    \item -i, --input - The input python script to analyze \textbf{(mandatory)}
+    \item -o, --output - The output file to store the analysis result to (standard output by default)
+    \item -c, --config - The configuration file to read the file structures from (config.toml by default)
+    \item -f, --format - The format of the analysis output, possible options: hr (human-readable), json (hr by default), csv
+\end{itemize}
+
+The behaviour and output of the program will be discussed in the next chapter.
+
+\section{Future extensions}
 
 \section*{Summary}
 \addcontentsline{toc}{section}{Summary}
