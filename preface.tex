@@ -1,14 +1,14 @@
 \chapter*{Introduction}
 \addcontentsline{toc}{chapter}{Introduction}
 
-An important part of~data analysis is~called a~data~manipulation or data~wrangling.
-The~goal of~the~data~manipulation is~to~take the raw~data produced by~some source and clean them and transform into
+An important part of~data analysis is~called data~manipulation or data~wrangling.
+The~goal of~data~manipulation is~to~take the raw~data obtained from~some source, clean them and transform them into
 better-structured error-free data which are more suitable for the~data~analysis itself.
 The data manipulations -~cleaning~and~transformations~- usually cannot be~done manually, since the~data are too large
 for~that.
 For manipulating large amounts of data, one needs an~automated tool.
 Popular approach to solve this problem is a~library in~a~programming language.
-Most of~such libraries, that became widely used in~the~industry, are Pandas~in~Python\cite{pandas_docs},
+Data~manipulation libraries that became widely used in~the~industry, are Pandas~in~Python\cite{pandas_docs},
 Tibble~in~R\cite{tibble} (R also has built-in
 support for~data~frames\cite{R-base}) or DataFrames.jl~in~Julia\cite{DataFrames.jl}.
 These libraries usually come with two types of data structures: one-dimensional array usually called Series
@@ -16,15 +16,15 @@ and two-dimensional tabular structure usually called Dataset~or~Dataframe.
 
 The~mentioned languages, Python, R and Julia, are~all~dynamic and~interpreted languages, meaning that they do~not~provide
 the~programmer with any~compile-time checks for type consistency and~variable or~column existence.
-These languages are~popular in~data-related subjects due~to~their shallow learning curve, easy~syntax and~the~fact that
-one does~not need to~complete course on~computer architecture to~use~it.
+These languages are~popular in~data-related subjects due~to~their easy~syntax and~the~fact that
+one does~not need to~complete a course on~computer architecture to~use~it.
 However, the user of~a~dynamic languages has~to~keep most of~the~information in~their~head (or~use comments~in~code a~lot)
-which is~a~potential source of~many different errors, that are, in~addition, detected no~sooner than in~runtime when
+which is~a~potential source of~many different errors, that are, in~addition, detected no~sooner than at~runtime when
 the program crashes.
 Consider for example the program in Listing~\ref{lst:pandas_errors}.
-There are some harder-to-spot mistakes such as referencing dropped column, summing columns of a different types
+There are some harder-to-spot mistakes such as referencing a dropped column, summing columns of different types
 or a misspelled column name.
-All these mistakes are detected in~runtime causing crash of the program.
+All these mistakes are detected at~runtime causing crash of the program.
 
 \begin{lstlisting}[caption=Pandas code with errors, label={lst:pandas_errors}, captionpos=b]
 import pandas as pd
@@ -56,15 +56,16 @@ Additionally, the~necessity for~a~lot~of~boilerplate code, worse readability and
 contrary~to the~static languages, usually support a REPL~tool or~just creating one~file and running~it.
 Ideally, we would~like to~use dynamic languages like~Python, R or Julia, while keeping the~safety of~static languages.
 
+\section*{Thesis goals}
 \textbf{The~goal~of~this~thesis}~is to~propose and~explore an~alternative solution to~the~problem of~data-manipulation
 code being error-prone and~provide an~implementation of~such~solution.
 The~solution will~be~based on~a~program verification method called Abstract Interpretation.
-The origins of~the~ideas behind the~method can~be~traced back~to~1970s and~were~explored by~Patrick
+The origins of~the~ideas behind the~method can~be~traced back~to~the~1970s when it~was~developed by~Patrick
 and~Radhia~Cousot\cite{Cousot:1977:AI}.
 
 In~essence, Abstract Interpretation partially executes the~given computer program over~an~abstract domain
 (such as \{+, 0, -\} for integers).
-It gains partial~information about the~programs semantics and~answering questions (as~mentioned
+It gains partial~information about the~programs semantics and~answers questions (as~mentioned
 by~B.~Blanchet\cite{Blanchet:2002:AI}) such~as:
 \begin{itemize}
     \item What is the worst-case execution time?
@@ -75,7 +76,7 @@ by~B.~Blanchet\cite{Blanchet:2002:AI}) such~as:
 
 The~idea of~analyzing programs working with~dataframes was~already proposed by~Yungyu~Zhuang
 and~Ming-Yang~Lu\cite{Zhuang:2022:TypeChecking}.
-However, we~aim to~go~deeper in~the~analysis and~choose a~different~approach for~implementing the~tool.
+However, we~aim to~present more~fundamental analysis and develop a more comprehensive tool.
 We will define our own framework with more levels of abstraction and expand the abstraction to non-pandas types as well.
 Also, we will interpret both branches of if-statements in case that we are not able to choose one.
 
