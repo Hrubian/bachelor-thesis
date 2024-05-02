@@ -1,13 +1,13 @@
 \chapter{Abstract Interpretation}
 
 In this chapter we explain the Abstract Interpretation from the theoretical point of view.
-At first, we recall some basic mathematical definitions such as partial ordering or supremum and infimum.
-Then we use this knowledge to define lattices and galois connections, that are the core concepts of Abstract
+At first, we recall some basic mathematical definitions such as partial order or supremum and infimum.
+Then we use this knowledge to define lattices and Galois connections, that are the core concepts of Abstract
 Interpretation.
-We also formalize a program - its syntax, semantics, trace and collecting semantics.
+We also formalize a program - its syntax, semantics, trace and Collecting semantics.
 At last, we use all this knowledge to explain the Abstract Interpretation method.
 This chapter is greatly inspired by Introduction to Abstract Interpretation by B.~Blanchet\cite{Blanchet:2002:AI}.
-He also covers more advanced topics that are not needed for our purposes, so I would redirect the more curious readers
+He also covers more advanced topics that are not needed for our purposes, so I would refer the more curious readers
 to his article.
 
 
@@ -31,8 +31,8 @@ Consider this very simple toy program:
 
 Given the assumption that \verb|read_number()| returns one real number given by the user and does not fail, what can
 we say about the content of the variables \verb|c|, \verb|d|, \verb|e|, \verb|f| and \verb|g|?
-Not much, except the fact that \verb|e| is non-negative (it is a square) and the calculation of \verb|g| can fail
-(due to division by zero).
+The answer is not much, except the fact that \verb|e| is non-negative (it is a square) and the calculation of \verb|g|
+can fail (due to division by zero).
 We cannot even say whether the values will be greater or less than the inputs \verb|a| and \verb|b|.
 
 This, of course, changes, when we introduce additional constraints on the inputs \verb|a| and \verb|b|.
@@ -49,21 +49,22 @@ What can we say about the variables then?
 Notice that the approximation of \verb|d| and \verb|e| would be even more precise if we also said whether the inputs
 are greater or less than 1.
 
-This shows that when we know the approximations of the input values, we are able to make statements about the behaviour
-of the program.
+This example shows that when we know the approximations of the input values, we are able to make statements about the
+behaviour of the program.
 In abstract interpretation, we try to interpret (execute) the given program with approximated input values and try to
-prove that the output is in such bounds or that it does not crash in any (or some) case.
+prove that the output is in certain bounds or that it does not crash in any (or some) case.
 Such analysis is always correct, but the results are not precise - it is an approximation of the behaviour of the program.
 Also note that this can be actually useful in practice since in many programs the variables usually are bounded due to
 their semantics.
-For example the hour of a day will always be a number between 0 and 24 (will you figure out why not just 23?),
+For example the hour of a day will always be a number between 0 and 24 (The answer to the question of why not just 23 is
+left as an exercise to the reader),
 number of workers in a factory will be always non-negative, election results of a political party will always be
 between 0 and 100 and a sum of degrees of an undirected graph will always be an even number.
 
 But what information should we remember for the variables in the program?
 In the simplest case we can just remember whether the values are positive, negative or zero.
 More advanced case (the one that we use in the example above) can use intervals.
-Generally we use a unification of arbitrary disjunctive (for simplicity) sets.
+Generally we use a union of arbitrary disjunctive (for simplicity) sets.
 Then the input constraints can look like this:
 \begin{gather*}
     a \in {1, 2, 3} \cup (0, 1)\\
@@ -78,21 +79,24 @@ Some examples:
     (matrix addition, multiplication, gaussian elimination) are correct.
 
     \item Geometry in 2D (or higher dimensions).
-    Points can be approximated by rectangular sectors.
+     Points in the context of 2D (or higher dimensional) geography can be approximated by rectangular sectors.
 
-    \item Boolean algebra
+    \item Boolean algebra (True, False) can be approximated by adding third value Unknown, which represents uncertainty.
 
-    \item Tabular data - the topic of this thesis
+%    \item Tabular data - the topic of this thesis
 \end{itemize}
+
+Another possible application - Tabular data - will be covered in the chapter~\ref{ch:putting-it-all-together}.
 
 
 \section{Lattices} %===================================================================================================%
 
 We first recall few already well-known definitions (Poset, Supremum, Infimum) and then use this
-to state the definitions of new objects (Lattice, Complete Lattice, Galois Connection).
+to state the definitions of more advanced objects (Lattice, Complete Lattice, Galois Connection)that will be later
+essential for formally defining the Abstract Interpretation framework.
 
 \begin{defn}[Partial order]
-    Relation $\leq$ on set $S$ is an partial order if $\forall a, b, c \in P$:
+    Relation $\leq$ on a set $S$ is a partial order if $\forall a, b, c \in S$:
     \begin{enumerate}
         \item $a \leq a$ (Reflexivity)
         \item $a \leq b \land b \leq a \implies a = b$ (Antisymmetry)
@@ -121,14 +125,15 @@ Last thing that we need before defining a Lattice are the definitions of supremu
 \begin{defn}
     On partially ordered set $(S, \leq)$, for $R \subseteq S$:
 
-    Upper bound of $R$ in $S$ is $a \in S$ such that $\forall x \in R: x \leq a$
+    Upper bound of $R$ in $S$ is $a \in S$ such that $\forall x \in R: x \leq a$.
 
-    Lower bound of $R$ in $S$ is $a \in S$ such that $\forall x \in R: a \leq x$
+    Lower bound of $R$ in $S$ is $a \in S$ such that $\forall x \in R: a \leq x$.
 
-    Supremum (we use symbol $\sup$) of $R$ in $S$ is $a \in S$
-    such that $\forall a' \in R, a' \leq a, \forall a'' \in S$ \xxx{TODO}% use the lower bounds
+    An upper bound $s$ of $R$ in $S$ is called a supremum (we use the symbol $\sup$)
+    if for all upper bounds $b$ of $R$ $S$ holds that $s \leq b$.
 
-    Infimum (we use symbol $\inf$)of $R$ in $S$ is $a \in S$ such that
+    A lower bound $w$ of $R$ in $S$ is called an infimum (we use the symbol $\inf$)
+    if for all lower bounds $b$ of $R$ in $S$ holds that $w \geq b$.
 \end{defn}
 
 With this knowledge, we have all we need to define a Lattice:
@@ -151,7 +156,7 @@ Note that this is a stronger condition than at Lattices, since pair is also a su
 That also means that every Complete Lattice is a Lattice.
 
 \begin{example}
-    All $(\mathbb{R}, \leq), (\mathbb{Q}, \leq), (\mathbb{Z}, \leq)$ are Complete Lattices. % todo why?
+    All $(\mathbb{R}, \leq), (\mathbb{Q}, \leq), (\mathbb{Z}, \leq)$ are Complete Lattices.
 
     Also, a power set of a set with inclusion as an ordering is a Complete Lattice.
     The supremum of a set of sets on power set can be defined as the union of the sets and the infimum can be defined as
@@ -180,15 +185,17 @@ So let us start by stating few definitions regarding the syntax:
 \begin{defn}[Statement]
     The following are Statements:
     \begin{itemize}
-        \item $end$
-        \item $x := E$ for variable $x$ and expression $E$
-        \item $if \: E \: goto \: n$ for expression $E$ and $n \in \mathbb{Z}$
-        \item $input \: x$ for variable $x$
-        \item $print \: E$ for expression $E$
+        \item $halt$
+        \item $x := E$ for a variable $x$ and an expression $E$
+        \item $if \: E \: goto \: n$ for an expression $E$ and $n \in \mathbb{Z}$
+        \item $input \: x$ for a variable $x$
+        \item $print \: E$ for an expression $E$
     \end{itemize}
 \end{defn}
 
-Then we can define a program as follows:
+In our model, we represent programs as a function that maps program locations (think addresses in memory) to statements
+(CPU instructions) at the given location.
+Formally:
 
 \begin{defn}[Program]
     Program is a function $Prog$ from integers to Statements.
@@ -196,10 +203,9 @@ Then we can define a program as follows:
     \[Prog: \mathbb{Z} \rightarrow Statements\]
 \end{defn}
 
-The connection of the formal definition of Program to the common intuition behind program works if we imagine the
-integers as the addresses in an address space and the statements as the CPU instructions.
-The state of the running program (process) in a given time $t$ is given by the program counter($pc$), saying which
+The state of the running program (process) at a given time $t$ is given by the program counter($pc$), saying which
 command is to be executed next, and the set of the variables in the environment $Env$.
+The environment $Env$ is a table that assigns values to variables in a scope.
 
 To know how the $pc$ and the variables change during the run of the program, we must define the semantics of the
 expressions and statements.
@@ -217,8 +223,8 @@ expressions and statements.
 
 \begin{defn} Statement semantics
     \begin{itemize}
-        \item $end$ - ends the execution of the process
-        \item $x := E$ - sets value of variable $x$ in the environment to the value $[E]$
+        \item $halt$ - ends the execution of the process
+        \item $x := E$ - sets the value of a variable $x$ in the environment to the value $[E]$
         \item $if \: E \: goto \: n$ - sets the $pc$ to $n$ if the result of $E$ is non-zero
         \item $input \: x$ - sets value of variable $x$ in the environment to the user input
         \item $print \: E$ - adds result of $E$ to the user output
@@ -233,32 +239,30 @@ a single trace.
 We define \textbf{Collecting Semantics} as an extension of the standard semantics on the set of all user possible inputs.
 So Collecting Semantics is the semantics capable of computing the set of all possible traces.
 
-% todo approximation
-
 
 \section{Galois Connections} %=========================================================================================%
 
 Let us this time start by the definition:
 
 \begin{defn}[Galois Connection]
-    Let $L_1$ (with ordering $\leq _1$) and $L_2$ (with ordering $\leq _2$) be Lattices. % todo galois connections are usually defined on just posets
+    Let $L_1$ (with ordering $\leq _1$) and $L_2$ (with ordering $\leq _2$) be Lattices.
     Also, let $\alpha: L_1 \rightarrow L_2$ and $\gamma: L_2 \rightarrow L_1$.
     Then the tuple $(\alpha, \gamma)$ is a Galois Connection, if:
     \[ \forall x \in L_1, \: \forall y \in L_2: \: \alpha(x) \leq_2 y \leftrightarrow x \leq_1 \gamma(y)\]
 \end{defn}
 
-So Galois Connection is basically a pair of functions connecting the two Lattices together.
+Galois Connection is a pair of functions connecting two Lattices.
 We call the first Lattice ($L_1$) the \textbf{concrete lattice} and the second lattice ($L_2$) the \textbf{abstract lattice}.
 Then the function $\alpha$ is called the \textbf{abstraction} and $\gamma$ is the \textbf{concretization}.
 
 In the context of abstract interpretation the concrete lattice is a power set (ordered by inclusion) of a set of values
-of variables of the program \xxx{TODO(too many ofs)}, while the abstract lattice is the set of values we work with during the program analysis.
+of variables of the program, while the abstract lattice is the set of values we work with during the program analysis.
 
 \subsection*{Examples of Galois Connections}
 \begin{enumerate}
     \item Approximating real numbers with signs and zero:
 
-    The concrete lattice is $\powerset{\mathbb{R}}$ and the abstract lattice is $\powerset{\{+, -, 0\}}$ (ordered by % todo define znaceni powerset
+    The concrete lattice is $\powerset{\mathbb{R}}$ and the abstract lattice is $\powerset{\{+, -, 0\}}$ (ordered by
     inclusion).
     The elements of abstract lattice say what signs can the corresponding element of concrete lattice have.
     For example the set $\{+, 0\}$ represents a non-negative number and $\{+, -\}$ represents a non-zero number in the
@@ -279,25 +283,24 @@ of variables of the program \xxx{TODO(too many ofs)}, while the abstract lattice
         {0} \: if \: 0 \in A \: \cup\\
         (0, \infty) \: if + \in A \: \\
     \end{gather*}
-    \xxx{todo show that the conditions for galois connection hold}
 
     \item Boolean algebra with uncertainty
 
-    The concrete lattice is $\powerset{\{True, False\}}$, the abstract lattice is $\{True, False, None\}$.
-    Note that $None$ means that we do not know the actual value.
+    The concrete lattice is $\powerset{\{True, False\}}$, the abstract lattice is \\ $\{True, False, Unknown\}$.
+    Note that $Unknown$ means that we do not know the actual value.
 
     Then definition of the abstraction is straightforward:
     \begin{gather*}
         \alpha(\{True\}) = True\\
         \alpha(\{False\}) = False\\
-        \alpha(\{True, False\}) = None
+        \alpha(\{True, False\}) = Unknown
     \end{gather*}
 
     And the definition of concretization:
     \begin{gather*}
         \gamma(True) = \{True\}\\
         \gamma(False) = \{False\}\\
-        \gamma(None) = \{True, False\}
+        \gamma(Unknown) = \{True, False\}
     \end{gather*}
 
     \item Reducing matrices to their dimensions:
@@ -313,7 +316,7 @@ of variables of the program \xxx{TODO(too many ofs)}, while the abstract lattice
     \[\gamma(M) = \{X \forall X \in \mathbb{R}^{r \times s}, (r,s) \in M\}\]
 \end{enumerate}
 
-Note that the set of all traces ordered by inclusion form a complete lattice. % todo any comment?
+Note that the set of all traces ordered by inclusion form a complete lattice.
 
 \section{The method} %=================================================================================================%
 
@@ -335,7 +338,7 @@ Then we move to the expressions and statements.
 \begin{itemize}
     \item \textbf{Values}
 
-    This is the simplest case, since the abstract semantics of $n$ from concrete lattice is just $\alpha(n)$.
+    This is the simplest case, since the abstract semantics of $n$ from the concrete lattice is just $\alpha(n)$.
 
     \item \textbf{Operators}
 
@@ -343,17 +346,17 @@ Then we move to the expressions and statements.
     \[a \: op \: b = \alpha(\gamma(a) \: op \: \gamma(b))\]
     So we concretize both the elements from the abstract lattice, then apply the operation $op$ and abstract the result
     back.
-    This seems intuitive but why is it the thing we want?
-    We want the operations to preserve the galois connection properties, meaning that \xxx{TODO}
+    It can be shown that this definition is the best (meaning smallest) possible approximation of the concrete $op$.
+    For more details, see the paper~Introduction to Abstract Interpretation by B.~Blanchet\cite{Blanchet:2002:AI}
 
 
     \item \textbf{Environment Variables}
 
-    The variable $x \in Env$ can be abstracted to $x_a$
-    \xxx{TODO}
+    The variable $x \in Env$ can be abstracted to $x_a$ by just taking the abstraction of $x$ ($x_a = \alpha(x)$).
+
     \item \textbf{Compound Expressions}
 
-    The abstract semantics of compound expressions (sums, products\ldots) can be obtained just by replacing the
+    The abstract semantics of the compound expressions (sums, products\ldots) can be obtained just by replacing the
     concrete semantics of the operator with the associated abstract operator.
 
     \item \textbf{Statements}
@@ -361,19 +364,28 @@ Then we move to the expressions and statements.
     \begin{itemize}
         \item
         If $Prog(pc) = x := E$ then
-        $pc = pc + 1$, $Env[x] = [E]_a$
+        $pc = pc + 1$, $Env_a[x] = [E]_a$.
 
         \item
-        If $Prog(pc) = input x$ then
-        $pc = pc + 1$, $Env[x] = \mathbb{R}$ %todo any better estimation?
+        If $Prog(pc) = input \: x$ then
+        $pc = pc + 1$, $Env_a[x] = \mathbb{R}$.
 
         \item
-        $pc = pc + 1$
+        The case, when $Prog(pc) = if \: E \: goto \: n$ is a bit tricky.
+        There are two possibilities of what can happen.
+        The first is that the $[E]_a$ contains only zero, or it does not contain zero at all.
+        In that case we know which branch should be taken, and we just update the $pc$ accordingly.
+        The other case happens when the $[E]_a$ contains both zero and non-zero elements.
+        Then we do not know which branch should be taken so the execution must split into two branches and both options
+        must continue separately.
 
         \item
-        If $Prog(pc) = if \: E \: goto \: n$ then
+        If $Prog(pc) = halt$ then we just stop the execution of the program (or the given branch if whe execution was
+        split).
+
+        \item
+        If $Prog(pc) = print x$ then we print the set $Env_a[x].$
     \end{itemize}
-    \xxx{TODO}
 \end{itemize}
 
 So how does the method work?
@@ -381,7 +393,7 @@ We abstract the user inputs and then interpret the program over the abstract lat
 Interpretation) using the abstract definitions of Expressions, Statements etc.
 We branch when we do not know what the next state should be (if statements).
 Then, when we want to know some property of the program, we just observe the abstract version of the variables we care
-about.
+about or check whether some branches halted with failure.
 
 \section*{Summary}
 \addcontentsline{toc}{section}{Summary}
