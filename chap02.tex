@@ -19,13 +19,17 @@ To give an example of an implementation of a data structure I mention a binary t
 
 In this chapter, when talking about data structures, we omit the implementation details, and we focus only on the
 interface of the data structure i.e.\ what operations are provided.
-Also, we assume existence of the primitive data types such as integers, floating-point numbers, strings etc.
+Also, we assume the existence of primitive data types such as integers, floating-point numbers, strings etc.
 
-\begin{defn}
-    \textbf{List} interface = \{ random access indexing, appending, inserting, removing, updating \} % todo based on zero-based indexes
+\begin{defn}[List interface]
+    \textbf{List} interface is a set of methods for random access, appending, inserting, updating and removing elements
+    from a collection.
+    All operations use numeric zero-based indexing.
+\end{defn}
 
-    \textbf{Dictionary} interface \{ key-based access, add, replace, remove \} % todo key-based
-
+\begin{defn}[Dictionary interface]
+    \textbf{Dictionary} interface supports accessing, adding, replacing or removing elements from a collection.
+    All operations use key-based indexing.
 \end{defn}
 
 \subsection{Series}
@@ -53,7 +57,7 @@ series[1] = 100
 \end{lstlisting}
 
 There can also be an index associated with the Series.
-The index is a set of distinct values of any elementary type (usually a string or a time) associated with the values of
+The index is a set of distinct values of any primitive type (usually a string or a time) associated with the values of
 the Series.
 It expands the interface of a Series with a Dictionary interface.
 Consequently, the items can be accessed using the values in the index.
@@ -124,7 +128,7 @@ dataframe['column3'] = [True, False, True, False]
 dataframe.at[1, 'column3'] = True
 \end{lstlisting}
 
-The dataframe can also have an index associated with the rows of Series.
+The Dataframe can also have an index associated with the rows of Series.
 Consequently, the Dataframe supports Dictionary interface on both rows and columns.
 Adding of new columns and rows is also supported.
 The listing~\ref{lst:dataframe_index} shows how we can use indexes when working with Dataframes in Pandas.
@@ -164,21 +168,21 @@ The operations that are commonly used in data manipulation were greatly influenc
 databases and the SQL language.
 However, they are usually more flexible and customizable. % todo explain more
 
-\subsection{SQL-inspired operations}
+\subsection{Relational operations}
 
 All well-known SQL relational databases support the following operations:
-\textbf{SELECT, GROUP BY, HAVING, WHERE, JOIN, ORDER BY, AS}.
+\texttt{SELECT, GROUP BY, HAVING, WHERE, JOIN, ORDER BY, AS}.
 All these operations are also (usually under a different name) present in the data manipulation libraries as well.
 We go through these operations and discuss their counterparts in Pandas.
 
-\begin{itemize}
-    \item SELECT
+\paragraph{SELECT} \leavevmode \\
 
-    The SELECT statement in SQL serves to select a specific subset of columns of a table.
-    In Pandas the square-brackets operator is used for that purpose.
-    As listing~\ref{lst:pandas_select} shows, the operator can return a Series or a Dataframe depending on whether
-    the argument is just a string or a list of strings.
-    \begin{lstlisting}[caption=Select in Pandas, label={lst:pandas_select}, captionpos=b]
+The SELECT statement in SQL serves to select a specific subset of columns of a table.
+In Pandas the square-brackets operator is used for that purpose.
+As listing~\ref{lst:pandas_select} shows, the operator can return a Series or a Dataframe depending on whether
+the argument is just a string or a list of strings.
+
+\begin{lstlisting}[caption=Select in Pandas, label={lst:pandas_select}, captionpos=b]
 dataframe = ... # initial dataframe
 
 # Select a subset of columns (returns a dataframe)
@@ -186,76 +190,83 @@ subset = dataframe[["column1", "column3"]]
 
 # Select one column (returns a series)
 column = dataframe["column2"]
-    \end{lstlisting}
-    Alternatively, the filter function can be also used for this purpose.
-    The important information for us will be that the operation returns a Dataframe with a different column structure
-    than the input Dataframe - it removes non-specified columns.
+\end{lstlisting}
 
-    \item WHERE
+Alternatively, the filter function can be also used for this purpose.
+The important information for us will be that the operation returns a Dataframe with a different column structure
+than the input Dataframe - it removes non-specified columns.
 
-    The WHERE statement in SQL filters out the rows that do not match a given predicate.
-    In this case Pandas was also able to make use of the square-brackets operator.
-    This time the operator accepts a Series of bool values and uses just the columns of a Dataframe with index same as
-    some True value in the Series.
-    The Series of bools is usually (but not necessarily) created using vectorized operations.
-    The listing~\ref{lst:pandas_where} shows the usage.
-    \begin{lstlisting}[caption=Where in Pandas, label={lst:pandas_where}, captionpos=b]
+The SELECT statement in SQL can also do more than just selecting a subset of columns.
+It can also apply aggregating function when used with group by.
+This option is covered later when we talk about the GROUP BY operation.
+
+\paragraph{WHERE} \leavevmode \\
+
+The WHERE statement in SQL filters out the rows that do not match a given predicate.
+In this case Pandas was also able to make use of the square-brackets operator.
+This time the operator accepts a Series of bool values and uses just the columns of a Dataframe with index same as
+some True value in the Series.
+The Series of bools is usually (but not necessarily) created using vectorized operations.
+The listing~\ref{lst:pandas_where} shows the usage.
+
+\begin{lstlisting}[caption=Where in Pandas, label={lst:pandas_where}, captionpos=b]
 dataframe = ... # initial dataframe
 
 # Select just rows where the "age" column is at least 18
-adults = dataframe[dataframe["age"] >= 18
-    \end{lstlisting}
-    The important information for us will be that the result of this operation is a Dataframe with a completely same
-    column structure.
+adults = dataframe[dataframe["age"] >= 18]
+\end{lstlisting}
 
-    \item AS
+The important information for us will be that the result of this operation is a Dataframe with the same column structure.
 
-    The AS keyword is used to rename a specific column.
-    Pandas also has this feature, although it is named differently.
-    The function is called rename, and it accepts a mapping from old column names to new column names.
-    The listing~\ref{lst:pandas_as} shows how the rename function can be used.
+\paragraph{AS} \leavevmode \\
 
-    \begin{lstlisting}[caption=As in Pandas, label={lst:pandas_as}, captionpos=b]
+The AS keyword is used to rename a specific column.
+Pandas also has this feature, although it is named differently.
+The function is called rename, and it accepts a mapping from old column names to new column names.
+The listing~\ref{lst:pandas_as} shows how the rename function can be used.
+
+\begin{lstlisting}[caption=As in Pandas, label={lst:pandas_as}, captionpos=b]
 dataframe = ... # initial dataframe
 
 # Rename some of the columns
 renamed_dataframe = dataframe.rename(
     columns={"column1": "col1", "column2": "col2"}
 )
-    \end{lstlisting}
+\end{lstlisting}
 
-    \item ORDER BY
+\paragraph{ORDER BY} \leavevmode \\
 
-    ORDER BY is used to sort the data by some column.
-    Pandas can do the same using the sort\_values function.
-    The example usage can be seen in the listing~\ref{lst:pandas_orderby}
+ORDER BY is used to sort the data by some column.
+Pandas can do the same using the sort\_values function.
+The example usage can be seen in the listing~\ref{lst:pandas_orderby}
 
-    \begin{lstlisting}[caption=Order by in Pandas, label={lst:pandas_orderby}, captionpos=b]
+\begin{lstlisting}[caption=Order by in Pandas, label={lst:pandas_orderby}, captionpos=b]
 dataframe = ... # initial dataframe
 
 # Order the dataframe rows by the values of column
 # 'surname' in the ascending order
 sorted = dataframe.sort_values(by=["surname"], ascending=True)
-    \end{lstlisting}
-    Note that the operation does not change the column structure of the dataframe.
+\end{lstlisting}
 
-    \item JOIN
+Note that the operation does not change the column structure of the Dataframe.
 
-    Join operation is used to combine rows from two tables based on some related columns.
-    There are four types of join - inner, left, right and outer.
-    Inner join returns rows that have matching rows in both tables.
-    Left join returns all rows from the left table and all matched rows from the right table.
-    Right join returns all rows from the right table and all matched rows from the left table.
-    And outer join returns rows where there is a match in either of the tables.
+\paragraph{JOIN} \leavevmode \\
 
-    Pandas has a function called merge for this purpose.
-    It accepts two dataframes and returns their corresponding join.
-    Besides the already mentioned joins, merge also supports a cross join, which is essentially a cartesian product of
-    two sets of rows.
-    The listing~\ref{lst:pandas_join} shows how the merge function can be used as well as what parameters does the
-    function accept.
+Join operation is used to combine rows from two tables based on some related columns.
+There are four types of join - inner, left, right and outer.
+Inner join returns rows that have matching rows in both tables.
+Left join returns all rows from the left table and all matched rows from the right table.
+Right join returns all rows from the right table and all matched rows from the left table.
+And outer join returns rows where there is a match in either of the tables.
 
-    \begin{lstlisting}[caption=Join in Pandas, label={lst:pandas_join}, captionpos=b]
+Pandas has a function called merge for this purpose.
+It accepts two Dataframes and returns their corresponding join.
+Besides the already mentioned joins, merge also supports a cross join, which is essentially a cartesian product of
+two sets of rows.
+The listing~\ref{lst:pandas_join} shows how the merge function can be used as well as what parameters does the
+function accept.
+
+\begin{lstlisting}[caption=Join in Pandas, label={lst:pandas_join}, captionpos=b]
 dataframe1 = ... # 1st initial dataframe
 dataframe2 = ... # 2nd initial dataframe
 
@@ -271,35 +282,34 @@ outer = pd.merge(
     left_on="left_key", right_on="right_key"
 cross = pd.merge(
     dataframe1, dataframe2, how="cross")
-    \end{lstlisting}
+\end{lstlisting}
 
-    \item GROUP BY
+\paragraph{GROUP BY} \leavevmode \\
 
-    The group by operation aggregates the rows based on specified columns.
-    It does not return normal rows but summary rows, which we can apply aggregate functions on.
-    Good example of an aggregate function can be max, min or sum.
+The group by operation aggregates the rows based on specified columns.
+It does not return normal rows but summary rows, which we can apply aggregate functions on.
+Good example of an aggregate function can be max, min or sum.
 
-    Pandas has a function with the same name - groupby.
-    It returns a DataframeGroupBy object, which we can apply aggregate functions on.
-    The listing~\ref{lst:pandas_groupby} shows the usage
+Pandas has a function with the same name - groupby.
+It returns a DataframeGroupBy object, which we can apply aggregate functions on.
+The listing~\ref{lst:pandas_groupby} shows the usage
 
-    \begin{lstlisting}[caption=Group by in Pandas, label={lst:pandas_groupby}, captionpos=b]
+\begin{lstlisting}[caption=Group by in Pandas, label={lst:pandas_groupby}, captionpos=b]
 dataframe = ... # initial dataframe
 
 # Group the dataframe by agg_column and return
-# the means for all other columns
-dataframe.groupby(by=["agg_column"]).mean()
-    \end{lstlisting}
+# the mean of the "salary" column
+dataframe.groupby(by=["work_department"])["salary"].mean()
+\end{lstlisting}
 
-    \item HAVING
+\paragraph{HAVING} \leavevmode \\
 
-    Having operation works somewhat like a where operation on a summary rows - where group by was already applied.
-    In having clause, we can use any aggregate function in a predicate and then filter the summary rows based on such
-    predicate.
+Having operation works somewhat like a where operation on a summary rows - where group by was already applied.
+In having clause, we can use any aggregate function in a predicate and then filter the summary rows based on such
+predicate.
 
-    Pandas can do this with the filter function. % todo
+Pandas can do this with the filter function. \xxx{TODO}
 
-\end{itemize}
 
 
 \subsection{Vectorized operations}

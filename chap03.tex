@@ -1,9 +1,8 @@
-\chapter{Putting it all together}\label{ch:putting-it-all-together} % TODO maybe change the name later :)
+\chapter{Putting it all together}\label{ch:putting-it-all-together}
 
-% TODO change 'As the name of this chapter' if you change the name of the chapter
-As the name of this chapter suggests, now we put the knowledge from the previous chapters together.
+As the name of this chapter suggests, we now put the knowledge from the previous chapters together.
 We build the Abstract Interpretation framework for data manipulation programs.
-It involves defining the concrete and abstract lattice and the galois connection between.
+It involves defining the concrete and abstract lattice and the Galois connection between.
 
 Since we are mostly focusing on Pandas in Python, we assume Python environment with Pandas, specifically:
 
@@ -16,16 +15,27 @@ Since we are mostly focusing on Pandas in Python, we assume Python environment w
 We also assume, unlike the Pandas, that Series are homogenous and Dataframes have homogenous columns.
 This also implies that each column of a Dataframe has an associated type.
 
+\begin{defn}
+    Let Df be a Dataframe and Sr a Series.
+    We assume the following operations for accessing metadata about the two structures:
+
+    \verb|columns(Df) = { Sr1 .. Srn }| \\
+
+    \verb|type(Sr) - returns type| \\
+
+    \verb|name(Sr) - returns name| \\
+\end{defn}
+
 Given these assumptions, we can define a Dataframe Structure:
 
 \begin{defn}[Dataframe Structure]
-    For a Dataframe $Df$, its \textbf{Dataframe} Structure is $DS(Df) = \{(Col.name, Col.type) \: for \: each \: column \: in \: Df\}$
+    For a Dataframe $Df$, its \textbf{Dataframe} Structure is $DS(Df) = \{ (name(Sr), type(Sr)) | Sr \in columns(Df) \}$
 \end{defn}
 
 Also, we define a Series Structure:
 
 \begin{defn}[Series Structure]
-    For a Series $Sr$, its \textbf{Series Structure} is $SS(Sr) = (Sr.name, Sr.type)$
+    For a Series $Sr$, its \textbf{Series Structure} is $SS(Sr) = (name(Sr), type(Sr))$
 \end{defn}
 
 
@@ -59,10 +69,10 @@ still sound.
 However, we can do something smarter.
 We will create and use the assumption that whenever the user inputs a Dataframe, the Column Structure of that Dataframe
 is known in advance.
-This is not very strong assumption in practice given the fact that the structure of the dataframe is usually known
+This is not a very strong assumption in practice given the fact that the structure of the dataframe is usually known
 during the process of writing the program anyway - otherwise we would not be able to write the program at all.
 
-So the abstract lattice is built from the Dataframe Structures and Series Structures.
+So the abstract lattice consists of the Dataframe Structures and Series Structures.
 We take the set of all possible Dataframe Structures and Series Structures.
 Then the abstract lattice is the power set of that set with the inclusion being the ordering.
 We again formalize this:
@@ -85,6 +95,7 @@ Dataframes (Series) from the input.
 Formally:
 
 \begin{defn}[Abstraction function]
+    Given the concrete lattice $L_c$
     \begin{gather*}
         \forall X \in L_c \\
         X_{df} = \{df \in X: \: df \: is \: Dataframe\} \\
@@ -100,6 +111,7 @@ on the output.
 So we just take all possible Dataframes (Series) with the given Dataframe (Series) Structure.
 
 \begin{defn}[Concretization function]
+    Given the abstract lattice $L_a$
     \begin{gather*}
         \forall X \in L_a \\
         X_{df} = \{df \in X: \: df \: is \: Dataframe Structure\} \\
@@ -118,14 +130,15 @@ So we just take all possible Dataframes (Series) with the given Dataframe (Serie
 In the first chapter we mentioned that the abstract semantics can be systematically derived from the galois connection
 and the concrete semantics.
 However, it is often not the best way to get to the abstract semantics.
-We do an alternative approach.
-We define the operations ourselves, since it is a very intuitive process. % todo weird :)
-We do not define all the operations that we introduced in the previous chapter, we take a subset of them and left the
-rest to the reader as an exercise.
+We follow an alternative approach.
+We define the operations ourselves, since it is a very intuitive process.
+We do not define all the operations that we introduced in the previous chapter, we take a subset of them and
+the rest can be found in the Pandalyzer implementation and their formal model can be defined in a similar way as the
+operations discussed in this section.
 
-We also define the operations rather on the single Dataframe (Series) Structures rather than on the sets, since it is
+We also define the operations on the single Dataframe (Series) Structures rather than on the sets, since it is
 easier to understand.
-It can then be extended to the set variants in a straightforward way. \xxx{TODO explain}
+It can then be extended to the variants with sets in a straightforward way.
 
 \begin{itemize}
     \item SELECT
@@ -156,7 +169,7 @@ It can then be extended to the set variants in a straightforward way. \xxx{TODO 
     The input is two DataframeStructures, type of join and related column names.
     The output should be the DataframeStructure of the joined Dataframe.
 
-    \item GROUP BY
+    \item GROUP BY \xxx{TODO}
 
 
 
