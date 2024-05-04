@@ -1,0 +1,35 @@
+\chapter{User documentation}\label{ch:user-documentation}
+
+
+\section{Building from source}
+
+To build the Pandalyzer from sources, follow the steps below:
+\begin{enumerate}
+    \item Ensure that you have JDK (version \xxx{todo version}), Gradle (version \xxx{todo version}), Git
+    and Python 3.x installed.
+    \item Clone the Pandalyzer repository:
+
+    \verb|git clone https://github.com/Hrubian/Pandalyzer.git|
+    \item Navigate to the root folder of the repository:
+
+    \verb|cd Pandalyzer|
+    \item Run the Gradle bootstrap script:
+
+    \verb|./gradlew build| or \verb|./gradlew.bat build| on Windows
+\end{enumerate}
+
+\section{Running the tool}
+
+The build generates a .jar file \xxx{TODO where}.
+This file can be run with the following command:
+\verb|java --jar \xxx{todo file path}|.
+The program accepts the following command-line arguments:
+\begin{itemize}
+    \item -h, --help - Prints usage information and exits
+    \item -i, --input - The input python script to analyze \textbf{(mandatory)}
+    \item -o, --output - The output file to store the analysis result to (standard output by default)
+    \item -c, --config - The configuration file to read the file structures from (config.toml by default)
+    \item -f, --format - The format of the analysis output, possible options: hr (human-readable), json (hr by default), csv
+\end{itemize}
+
+The behaviour and output of the program will be discussed in the next chapter.
