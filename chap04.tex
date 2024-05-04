@@ -437,7 +437,18 @@ col = "string"
 
 This means that files with names such as 01\_file.csv, 02\_file.csv, 99\_file.csv have one column of type string.
 
-\section{Future extensions}
-
 \section*{Summary}
 \addcontentsline{toc}{section}{Summary}
+
+We presented the Pandalyzer - a data manipulation code analyzer for Python and Pandas.
+The tool loads the Python code, then parses it and converts it to the AST using a Python script.
+Then the AST is traversed and partially interpreted.
+We keep the Analysis Context with all variables, warnings and errors.
+The data structures are represented by a set of classes implementing the PythonDataStructure.
+The uncertainty is handled using the NondeterministicDataStructure, UnresolvedDatastructure and null values inside the
+typed structures.
+The Pandas structures - Dataframe and Series - correspond to the Dataframe Structure and Series Structure defined
+in the previous chapter.
+The operations implement a lot of checks that should prevent the user from doing many common mistakes.
+The Pandalyzer also supports config file, where the user can specify the structure of the input csv files.
+The planned future extensions are mentioned in the Future Work~\ref{sec:future-work} section of the Conclusion.
