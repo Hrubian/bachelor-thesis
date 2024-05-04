@@ -9,13 +9,13 @@ Let us recap and summarize to what extent we did that.
 We first defined a framework for the Abstract Interpretation analysis of the Dataframe and Series type and then expanded it
 to other types such as strings, numbers, lists, etc.
 Then we used the framework to implement the Pandalyzer.
-The Pandalyzer is a code-analysis tool that uses Abstract Interpretation to interpret Python code that uses Pandas
+The Pandalyzer is a code-analysis tool that uses Abstract Interpretation to interpret Python code with Pandas
 library.
 The Pandalyzer is capable of detecting errors such as access to non-existent column, operation on incompatible types,
-incorrect function arguments, operations leading to incorrect state.
+incorrect function arguments, operations leading to an incorrect state.
 It also reports the structure of the output CSV files and is able to accept information about the structure of the input CSV files.
 The Pandalyzer is able to work with some amount of uncertainty generated from the user input.
-The supported functions include merge, groupby, drop, rename, read\_csv, to\_csv, concat, Dataset creation,
+The supported functions include merge, groupby, drop, rename, read\_csv, to\_csv, concat, Dataframe creation,
 Series creation, the subscript operator in both get and set contexts and vectorized sums and products.
 As shown in the case studies in the chapter~\ref{ch:evaluation-of-solution}, this set of functions already gives
 the user enough flexibility to do many various data manipulation tasks.
@@ -29,7 +29,7 @@ However, it is planned in the Future Work~\ref{sec:future-work} to add support f
 \section*{Related Work}
 \addcontentsline{toc}{section}{Related Work}
 
-The idea of analyzing programs working with dataframes was already proposed by~Yungyu~Zhuang
+The idea to use Abstract Interpretation to analyze programs working with Dataframes was already proposed by~Yungyu~Zhuang
 and~Ming-Yang~Lu~\cite{Zhuang:2022:TypeChecking}.
 They also created a proof of concept implementation named PDChecker.
 However, PDChecker does not have as many checks, does not report output CSV files (via to\_csv() function) and
@@ -46,7 +46,7 @@ a table similarly as we did it in the chapter~\ref{ch:putting-it-all-together}.
 
 
 \section*{Future Work}\label{sec:future-work}
-\addcontentsline{toc}{section}{Future Work} % todo maybe will need reformating, sounds a bit weird :)
+\addcontentsline{toc}{section}{Future Work}
 
 There is a lot of plans ahead of us regarding the implementation.
 In the future, we would like to support more Pandas operations since Pandas is a large library with many useful
