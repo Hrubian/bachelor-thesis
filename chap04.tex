@@ -77,7 +77,6 @@ In the rest of the chapter, we answer the following questions:
     (Section~\ref{subsec:the-abstract-operations})
     \item How does the tool handle non-deterministic or unknown data?
     (Section~\ref{subsec:nondeterminism})
-%    \item What does the output of the tool look like?
     \item How does the tool accept the additional information about the input CSV files?
     (Section~\ref{subsec:configuration-file})
 \end{itemize}
@@ -168,7 +167,6 @@ Last type is the Error.
 It tells us that the operation failed, and it also provides a reason string.
 
 We said that every Python data type has to implement the PythonDataStructure interface.
-%But what types do we define?
 We would like to define abstract versions of standard Python types, meaning PythonString, PythonInt, PythonBool,
 PythonNone, PythonList or PythonDict.
 There are also functions (yes, a function is also a PythonDataStructure).
@@ -178,10 +176,6 @@ Another things that also implement the PythonDataStructure are imports.
 Currently, the only supported import is PandasImport, but the implementation can be easily extended by others.
 The Pandas data types support is added by creating DataFrame and Series classes that also implement the PythonDataStructure
 interface.
-
-\subsection{The Abstract Operations}\label{subsec:the-abstract-operations}
-
-\subsection{Dataframe and Series Representation}\label{subsec:dataframe-and-series-representation}
 
 \subsection{Nondeterminism, unknown values and error recovery}\label{subsec:nondeterminism}
 
@@ -208,9 +202,171 @@ When we try to do an operation that is not permitted, the result of that operati
 reason inside.
 The reason is then added to the list of all errors.
 
-
 \xxx{fork-join pattern on analysis context on if-statements}
 
+\subsection{Dataframe and Series Representation}\label{subsec:dataframe-and-series-representation}
+
+The Dataframe and Series representation mostly correspond to the Dataframe Structure and Series Structure defined in the
+previous chapter.
+The listing~\ref{lst:dataframe_definition} shows the definition of DataFrame in the Pandalyzer source code.
+
+\begin{lstlisting}[caption=Kotlin definition of the Dataframe, label={lst:dataframe_definition}, captionpos=b]
+data class DataFrame(
+    val fields: MutableMap<FieldName, FieldType>?,
+) : PythonDataStructure
+\end{lstlisting}
+
+The DataFrame class implements the PythonDataStructure interface since it is a type in Python.
+It has a single (mutable) map, where the key type is a FieldName, which is a string.
+The FieldType is an enum of all possible types that a column of a Dataframe in Pandas can have.
+Also note that the map is nullable.
+The DataFrame(fields=null) represents a Dataframe with unknown Dataframe Structure.
+
+The listing~\ref{lst:series_definition} shows the definition of Series in the Pandalyzer source code.
+
+\begin{lstlisting}[caption=Kotlin definition of the Series, label={lst:series_definition}, captionpos=b]
+data class Series(
+    val label: FieldName?,
+    val type: FieldType?,
+) : PythonDataStructure
+\end{lstlisting}
+
+The Series class also implements the PythonDataStructure interface.
+The Series keeps the type information as well as the label.
+Note that both the fields are nullable, meaning that it can happen that we do not know them.
+
+Another Pandas types implemented in the Pandalyzer are SeriesGroupBy and DataframeGroupBy - the results of the groupby
+operation.
+
+\subsection{The Abstract Operations}\label{subsec:the-abstract-operations}
+
+When implementing the abstract operations, we have to perform many check before the abstract operation itself.
+We have to validate all the arguments - they can be nondeterministic, they can have null value inside, or, if they are
+a compound type (list or dictionary), they can have an element that has a null value inside.
+
+We present the idea of the implementation on an example.
+The example is the rename function of a Dataframe.
+It (in its simplest form) accepts an argument containing a dictionary mapping old column names to new column names.
+The rename call can look as follows: \verb|df.rename({"old1": "new1", "old2": "new2"})|.
+
+The \verb|df.rename| says that we are accessing |rename| attribute of the |df|.
+The implementation of |attribute| function of DataFrame is shown in the listing~\ref{lst:dataframe_attribute}
+
+\begin{lstlisting}[caption=Snippet of attribute function of Dataframe, label={lst:dataframe_attribute}, captionpos=b]
+override fun attribute(identifier: Identifier
+        ): OperationResult<PythonDataStructure> =
+    when (identifier) {
+        "rename" -> DataFrame_RenameFunc(this).ok()
+        "merge" -> DataFrame_MergeFunc(this).ok()
+        \* snip... other functions *\
+        else -> fail(
+            "Unknown identifier on dataframe: $identifier"
+        )
+    }
+\end{lstlisting}
+
+The attribute function accepts the \verb|identifier| argument and checks if it is the name of one of the known functions.
+If it finds the right function, it returns the object representing the function (wrapped in an OperationResult).
+
+Then the part \verb|rename(...)| means that we call invoke on the \\ DataFrame\_RenameFunc object.
+The invoke function parses the argument, checks that it is a PythonDict, does non-deterministic split if necessary and
+calls the rename function which performs the logic of the rename operation.
+The invoke function is rather technical so we skip that.
+Let us instead discover what the rename function of DataFrame\_RenameFunc object looks like.
+%It can be seen in the listing~\ref{lst:rename_invoke}
+
+\begin{lstlisting}[caption=The rename function of DataFrame\_RenameFunc, label={lst:rename_invoke}, captionpos=b]
+private fun rename(dict: PythonDict
+    ): OperationResult<PythonDataStructure> {
+    if (dict.values == null) {
+        return DataFrame(null)
+            .withWarn("Unable to rename dataframe
+                because the values of dictionary are unkown")
+    }
+    if (dataFrame.fields == null) {
+        return DataFrame(null)
+            .withWarn("Unable to rename
+                dataframe with unknown structure")
+    }
+
+// check that the old values in the mapping dict are all strings
+    val nonStringOldValues = dict.values
+        .filterKeys { (it is PythonString).not() }.keys
+    if (nonStringOldValues.isNotEmpty()) {
+        return fail("The old column names
+            should be strings, but were $nonStringOldValues")
+    }
+
+// check that the new values in the mapping dict are all strings
+    val nonStringNewValues = dict.values
+        .filterValues { (it is PythonString).not() }.values
+    if (nonStringNewValues.isNotEmpty()) {
+        return fail("the new column names
+            should be strings, but were $nonStringNewValues")
+    }
+
+// check that the old and new values in the mapping are known
+    val nullMapping = dict.values.map {
+        (it.key as PythonString).value
+            to (it.value as PythonString).value
+    }
+    if (nullMapping.any {
+        it.first == null || it.second == null }){
+        return DataFrame(null)
+            .withWarn("Unable to resolve
+            some mapping parts of rename function")
+    }
+    val mapping = nullMapping
+        .associate { it.first!! to it.second!!}
+
+    // check that all the old values exist in the dataframe
+    val missingOldValues = mapping.keys
+        .filterNot { it in dataFrame.fields }
+    if (missingOldValues.isNotEmpty()) {
+        return fail("The values $missingOldValues
+            do not exist in the dataframe")
+    }
+
+// check that new values are not colliding with old values
+    val collidingValues = mapping
+        .filter { it.value in dataFrame.fields }
+    if (collidingValues.isNotEmpty()) {
+        val message =
+            collidingValues
+                .map {
+            "Cannot rename a dataframe column
+            ${it.key} to ${it.value} " +
+            "since ${it.value} already
+            exists in the dataframe"
+                }
+                .joinToString("\n")
+        return fail(message)
+    }
+
+    // check that there are no duplicate new values
+    val duplicateValues = mapping.values
+        .groupBy { it }.filterValues { it.size > 1 }
+    if (duplicateValues.isNotEmpty()) {
+        return fail("There are duplicate new values in
+            the rename function: ${duplicateValues.keys}")
+    }
+
+    return DataFrame(fields = dataFrame.fields
+        .mapKeys { mapping[it.key] ?: it.key }.toMutableMap()
+    ).ok()
+}
+\end{lstlisting}
+
+Note that the example was altered to fit horizontally on the page.
+The rename function first checks that no value needed to determine the result is null.
+It also checks that both the keys and values are all strings, since that is the only accepted option for a rename
+function.
+The next check ensures that the keys in the dictionary have a corresponding columns in the Dataframe.
+Last thing that the function checks are collisions and duplicates.
+Then, new Dataframe with the new column structure is returned.
+Note that we fail only if there is something wrong.
+We do not fail if we do not have enough information.
+Rather we return a Dataframe with unknown structure and also add a warning.
 
 \subsection{Design Decision - Configuration file}\label{subsec:configuration-file}
 
