@@ -1,2 +1,70 @@
 \chapter*{Conclusion}
 \addcontentsline{toc}{chapter}{Conclusion}
+
+The aim of this thesis was to design and implement a code-analysis tool for the Pandas library that would be capable of
+checking common kinds of errors such as accesses to misspelled or non-existent columns.
+The resulting system should have been evaluated through a set of realistic case studies.
+Let us recap and summarize to what extent we did that.
+
+We first defined a framework for the Abstract Interpretation analysis of the Dataframe and Series type and then expanded it
+to other types such as strings, numbers, lists, etc.
+Then we used the framework to implement the Pandalyzer.
+The Pandalyzer is a code-analysis tool that uses Abstract Interpretation to interpret Python code that uses Pandas
+library.
+The Pandalyzer is capable of detecting errors such as access to non-existent column, operation on incompatible types,
+incorrect function arguments, operations leading to incorrect state.
+It also reports the structure of the output CSV files and is able to accept information about the structure of the input CSV files.
+The Pandalyzer is able to work with some amount of uncertainty generated from the user input.
+The supported functions include merge, groupby, drop, rename, read\_csv, to\_csv, concat, Dataset creation,
+Series creation, the subscript operator in both get and set contexts and vectorized sums and products.
+As shown in the case studies in the chapter~\ref{ch:evaluation-of-solution}, this set of functions already gives
+the user enough flexibility to do many various data manipulation tasks.
+Moreover, the Pandalyzer is highly extensible, so implementing support for other Pandas functions is possible.
+
+On the other hand, the Pandalyzer has some limitations.
+It now only supports a subset of Python language so the analyzer will not be able to proceed with the analysis when
+it encounters unknown Python construct.
+However, it is planned in the Future Work~\ref{sec:future-work} to add support for the rest of the Python language.
+
+\section*{Related Work}
+\addcontentsline{toc}{section}{Related Work}
+
+The idea of analyzing programs working with dataframes was already proposed by~Yungyu~Zhuang
+and~Ming-Yang~Lu~\cite{Zhuang:2022:TypeChecking}.
+They also created a proof of concept implementation named PDChecker.
+However, PDChecker does not have as many checks, does not report output CSV files (via to\_csv() function) and
+does not allow for interpreting multiple branches of if-statements and other sources of non-determinism.
+
+Another related subject are the type hints~\cite{python_typing} in Python language.
+The language itself does not enforce any typing rules, but we can put type annotations in the code and analyzers
+integrated in the IDE can warn us in case that the types do not match.
+Unfortunately, this is not useful for our case, since the type annotations are only able to express that
+(for example) the function returns a Pandas Dataframe, not a Pandas Dataframe with a specific column structure.
+
+The Types for Tables~\cite{types_for_tables} article defines the Table API - the definition of a table and operations on
+a table similarly as we did it in the chapter~\ref{ch:putting-it-all-together}.
+
+
+\section*{Future Work}\label{sec:future-work}
+\addcontentsline{toc}{section}{Future Work} % todo maybe will need reformating, sounds a bit weird :)
+
+There is a lot of plans ahead of us regarding the implementation.
+In the future, we would like to support more Pandas operations since Pandas is a large library with many useful
+operations.
+We would also like to add support for working with Indexes on Dataframes and Series.
+The Pandalyzer so far supports a limited subset of Python language constructs.
+We chose the most useful language constructs for the data manipulation.
+However, the plan for the future is to add support for other Python constructs such as Lambdas, Match statements,
+For-loops or Classes.
+As of now, Pandalyzer is only able to analyze one module, so extending it to be able to analyze multiple modules together
+could be also a useful extension.
+
+The Pandalyzer tool could be also extended for other related Python libraries.
+A good example is the numpy library for working with vectors, matrices etc.
+The abstraction could be defined as the dimensions of the vectors and matrices.
+Another good example of a library worth including to the Pandalyzer is the matplotlib library for data visualization.
+We could support reporting of what visualizations would be displayed to the user.
+This could be implemented in a similar way as the analysis of the to\_csv function in Pandas.
+
+Another field where the Pandalyzer could be extended is its integration to the IDEs such as PyCharm or VS Code.
+This could be done using the Language Server Protocol.
