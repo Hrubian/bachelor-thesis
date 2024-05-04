@@ -202,7 +202,20 @@ When we try to do an operation that is not permitted, the result of that operati
 reason inside.
 The reason is then added to the list of all errors.
 
-\xxx{fork-join pattern on analysis context on if-statements}
+The Pandalyzer is able to execute multiple branches of if-statement if it is not able to resolve, which branch it should
+choose.
+Each PythonDataStructure implements the boolValue function.
+The function returns True, False or null.
+If the boolValue of the expression in the condition of the if-statement returns null, we have to execute both the
+branches of the if-statement.
+For this purpose, we introduce the fork-join pattern on the Analysis Context.
+The Analysis Context has functions fork and join.
+The fork function returns new Analysis Context that it equal to the original Analysis Context.
+Then we use the original context to execute the body of the if-statement and use the forked context to execute
+the else branch of the if-statement.
+Then we call \verb|originalContext.join(forkedContext)| which merges the forked context back to the original context.
+If some of the values differ across the contexts, we create a Nondeterministic Structure and insert the different
+structures there.
 
 \subsection{Dataframe and Series Representation}\label{subsec:dataframe-and-series-representation}
 
