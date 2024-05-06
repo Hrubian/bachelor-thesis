@@ -416,8 +416,90 @@ have the same structure.
 
 \paragraph{Case Study \#4:} High uncertainty, user input \\
 
-The fourth case study again focuses on the uncertainty, but it shows different use cases of uncertainty than the second
-case study.
+The fourth case study again focuses on the uncertainty, but it shows different use cases of the uncertainty than the
+second case study.
+
+This time, we do not have any configuration file.
+There is just a source code that is shown in the listing~\ref{lst:cs4_code}.
+
+\begin{lstlisting}[caption=Code for the fourth case study in Pandas, label={lst:cs4_code}, captionpos=b, numbers=left]
+import pandas as pd
+
+df = pd.DataFrame({
+    "string_column": [
+        input("First string: "),
+        input("Second string: "),
+        input("Third string: ")
+    ],
+    "int_column": [
+        int(input("First int: ")),
+        int(input("Second int: ")),
+        int(input("Third int: "))
+    ]
+})
+
+print(df[input("What column do you want to see? ")])
+
+df["note"] = "User inserted the following string" \
+             + df["string_column"]
+
+df.to_csv("output.csv")
+\end{lstlisting}
+
+Even though the whole Dataframe \verb|df| is constructed from the user input, the Pandalyzer should have enough
+information to derive its structure.
+The Pandalyzer should also be able to derive the type of the \verb|note| column.
+
+The listing~\ref{lst:cs4_analysis_output} shows the actual output of the analysis.
+
+\begin{lstlisting}[caption=Analysis output of the fourth case study, label={lst:cs4_analysis_output}, captionpos=b]
+Summary of analysis: OK
+Global data structures (2):
+pd: PandasImport
+df: DataFrame(columns={string_column=StringType,
+    int_column=IntType, note=StringType})
+
+Warnings (11):
+0: Assign from line 3 to line 14 columns 0 - 2:
+    Unable to resolve result of input
+1: Assign from line 3 to line 14 columns 0 - 2:
+    Unable to resolve result of input
+2: Assign from line 3 to line 14 columns 0 - 2:
+    Unable to resolve result of input
+3: Assign from line 3 to line 14 columns 0 - 2:
+    Unable to determine the string value for int function
+4: Assign from line 3 to line 14 columns 0 - 2:
+    Unable to resolve result of input
+5: Assign from line 3 to line 14 columns 0 - 2:
+    Unable to determine the string value for int function
+6: Assign from line 3 to line 14 columns 0 - 2:
+    Unable to resolve result of input
+7: Assign from line 3 to line 14 columns 0 - 2:
+    Unable to determine the string value for int function
+8: Assign from line 3 to line 14 columns 0 - 2:
+    Unable to resolve result of input
+9: ExpressionStatement on line 16 columns 0 - 52:
+    The key for subscript of dataframe is not known
+10: ExpressionStatement on line 16 columns 0 - 52:
+    Unable to resolve result of input
+
+Errors (0):
+
+Output files (1):
+File output.csv:
+    string_column : StringType
+    int_column : IntType
+    note : StringType
+\end{lstlisting}
+
+The first thing to notice is that the result of the analysis is \verb|OK|.
+Another important information is that the Pandalyzer was actually able to derive the type of the \verb|output.csv| file.
+The Pandalyzer knows that the \verb|input| function returns string and the \verb|int| function returns an int if
+it receives a string as an input.
+It does not need to know the exact values to construct the Dataframe structure.
+At last, there are eleven warnings.
+All of them are caused by the uncertainty and are mostly related to the \verb|input| and \verb|int| functions.
+
 
 \paragraph{Case Study \#5:} Group by, aggregations \\
 
@@ -520,3 +602,4 @@ There are four errors, each explaining one of the mistakes discussed.
 
 \section*{Summary}
 \addcontentsline{toc}{section}{Summary}
+
