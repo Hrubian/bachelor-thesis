@@ -415,8 +415,108 @@ have the same structure.
 
 
 \paragraph{Case Study \#4:} High uncertainty, user input \\
-This time we focus on
 
+The fourth case study again focuses on the uncertainty, but it shows different use cases of uncertainty than the second
+case study.
+
+\paragraph{Case Study \#5:} Group by, aggregations \\
+
+In the last case study, we go over some use cases of the group by operation and the associated aggregations.
+Let us have the following configuration file (shown in listing~\ref{lst:cs5_config}):
+
+\begin{lstlisting}[caption=config.toml file for the fifth case study, label={lst:cs5_config}, captionpos=b]
+[all_strings.csv]
+str1 = "string"
+str2 = "string"
+str3 = "string"
+
+[first_string.csv]
+col1 = "string"
+col2 = "int"
+col3 = "int"
+
+[first_int.csv]
+col1 = "int"
+col2 = "string"
+col3 = "string"
+
+[all_different.csv]
+int_col = "int"
+str_col = "string"
+bool_col = "bool"
+\end{lstlisting}
+
+The source code for the case study can be seen in the listing~\ref{lst:cs5_code}.
+
+\begin{lstlisting}[caption=Code of the fifth case study in Pandas, label={lst:cs5_code}, captionpos=b, numbers=left]
+import pandas as pd
+
+all_strings_df = pd.read_csv("all_strings.csv")
+first_string_df = pd.read_csv("first_string.csv")
+first_int_df = pd.read_csv("first_int.csv")
+all_different_df = pd.read_csv("all_different.csv")
+
+pass_df1 = first_string_df.groupby("col1").mean()
+fail_df1 = first_string_df.groupby("col2").mean()
+
+pass_df2 = all_strings_df.groupby("str1").count()["str2"] + 3
+fail_df2 = all_strings_df.groupby("str1").count()["str2"] + "hi"
+
+pass_df3 = all_different_df.groupby("bool_col").sum()
+fail_df3 = all_different_df.groupby("str_col").sum()
+
+pass_df4 = first_int_df.groupby(["col2", "col3"]).mean()
+fail_df4 = first_int_df.groupby("col3").mean()
+\end{lstlisting}
+
+The code reads all four CSV files defined and stores them in the Dataframes.
+Then, there are four pairs group by operations followed by aggregations.
+Every pair has one operation that passes and one that fails.
+
+The first pair applies the \verb|mean| function on the \verb|first_string_df| grouped by \verb|col1| and by \verb|col2|.
+However, only the first option passes.
+The reason is that the mean function is applied to all columns that we did not group by.
+So in the second case it is also the \verb|col1| column which is string.
+But the mean function cannot be applied on a string column.
+
+The second pair shows the usage of \verb|count| function on the \verb|all_strings_df| grouped by \verb|str1|.
+The count should return an int column for all columns that we did not group by.
+So summing some of the columns with a number should pass and summing it with string should fail.
+
+In the third pair we apply the sum function to non-grouped columns.
+In the first case it is \verb|str_col| and \verb|int_col|, which can be summed.
+In the second case it is \verb|int_col| and \verb|bool_col|.
+The second case will actually \textbf{not} fail this time.
+But summing of bool column is usually something that we do not want, so we should consider it an error.
+
+The last (fourth) case again computes a mean.
+This time, the first case will not fail, since the only column we apply mean on is \verb|col1| which is an int column.
+The second case will fail, since we apply the mean on both the \verb|col1| and \verb|col2|, but the \verb|col2| is
+a string column which we cannot apply mean on.
+
+The listing~\ref{lst:cs5_analysis_output} shows the output of the Pandalyzer on the code in the listing~\ref{lst:cs5_code}
+and the configuration in the listing~\ref{lst:cs5_config}.
+
+\begin{lstlisting}[caption=Analysis output of the fifth case study, label={lst:cs5_analysis_output}, captionpos=b]
+Summary of analysis: NOT OK
+\* snip *\
+Warnings (0):
+
+Errors (4):
+0: Assign on line 9 columns 0 - 49:
+    Cannot apply mean on the columns: col1 of type StringType,
+1: Assign on line 12 columns 0 - 67:
+    Cannot sum a series of type IntType with PythonString
+2: Assign on line 15 columns 0 - 52:
+    Cannot apply sum on the columns: bool_col of type BoolType,
+3: Assign on line 18 columns 0 - 46:
+    Cannot apply mean on the columns: col2 of type StringType,
+
+Output files (0):
+\end{lstlisting}
+
+The analysis shows exactly what we said.
+There are four errors, each explaining one of the mistakes discussed.
 
 \section*{Summary}
 \addcontentsline{toc}{section}{Summary}
