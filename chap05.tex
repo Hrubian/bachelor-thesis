@@ -16,9 +16,14 @@ Each case study contains:
     \item The output of the analyzer in the good case and in the case with mistakes
 \end{itemize}
 
-\paragraph{Case Study \#1:} Multiple operations, multiple datasets, no uncertainty  \\
+\paragraph{Case Study \#1:} Multiple operations, multiple Dataframes, no uncertainty  \\
 
-In the first case study we work with a data from sport competitions agency.
+The purpose of the first case study is to show the capabilities of Pandalyzer in a deterministic environment when
+the Pandalyzer has all the information it needs for the analysis and there is no uncertainty.
+There are, however, many different operations with multiple Dataframes.
+We show that Pandalyzer is able to check input for all these operations and determine their output.
+
+In this case study we work with a data from sport competitions agency.
 We get a csv file with competitions that they organized.
 We also get a csv file with all attendees of these competitions.
 Last file contains information about the number of points that an attendee got from a specific competition.
@@ -75,12 +80,247 @@ top_two_per_age_df = scores_with_age_df \
 top_two_per_age_df.to_csv("top_two_per_age.csv")
 \end{lstlisting}
 
-\xxx{TODO what is tricky about this example, what does the analyzer say, what mistakes can we do, does analyzer spot them? how?}
+Let us break down the code in the listing~\ref{lst:cs1_code}.
+We first read all the CSV files and store the data to Pandas Dataframes.
+We also rename the \verb|name| column in \verb|matches_df| to \verb|match_name| so that the name of the column makes
+sense later when it is merged with other Dataframes.
+This is the first tricky part, since from now on we have to remember that the \verb|matches_df| does not contain a name
+column but rather a \verb|match_name| column.
+Then, since \verb|attendees_df| contains \verb|name| and \verb|surname| columns and the \verb|scores_df| contains
+\verb|name_surname|, we also have to create a new column \verb|name_surname| in the \verb|attendees_df| and drop the
+old columns (\verb|name| and \verb|surname|).
+The next two operations merge the three Dataframes to a \verb|scores_with_age_df|.
+We can notice that it is now already hard to keep track of the structure of the Dataframes.
+Then the Dataframe is sorted by \verb|age|, grouped by \verb|age| and \verb|match_name| and the first two items from each group are selected.
+Also, we drop the \verb|match_id| since we do not need it in the final data.
+The resulting Dataframe is stored to a CSV file called \verb|top_two_per_age.csv|.
+
+This case study shows two ideas.
+First, it is hard to keep track of everything what is happening with the Dataframes, and it is easy to do a mistake
+e.g.~access already non-existent column, misspell the column name or incorrectly specify the arguments of a pandas function.
+Second, the scenario where we are able to deterministically derive the structure of the resulting data (e.g.~it does not
+depend on any user input or other sources of uncertainty) can be a very realistic scenario. % todo is this clear enough?
+
+What we want from the Pandalyzer in this case is to give us the structure of the \verb|top_two_per_age.csv| file
+and warn us in case that we do any of the mistakes mentioned.
+The listing~\ref{lst:cs1_pandalyzer_normal} shows the output of the Pandalyzer given the input shown in the
+listing~\ref{lst:cs1_code} and the configuration shown in the listing~\ref{lst:cs1_config}.
+
+\begin{lstlisting}[caption=Output of Pandalyzer on the first case study, label={lst:cs1_pandalyzer_normal}, captionpos=b]
+Summary of analysis: OK
+Global data structures (7):
+pd: PandasImport
+attendees_df: DataFrame(columns={age=IntType,
+    name_surname=StringType})
+matches_df: DataFrame(columns={id=IntType,
+    match_name=StringType})
+scores_df: DataFrame(columns={name_surname=StringType,
+    match_id=IntType, score=IntType})
+scores_with_match_name_df: DataFrame(columns={
+    name_surname=StringType, match_id=IntType,
+    score=IntType, match_name=StringType})
+scores_with_age_df: DataFrame(columns={name_surname=StringType,
+    match_id=IntType, score=IntType,
+    match_name=StringType, age=IntType})
+top_two_per_age_df: DataFrame(columns={name_surname=StringType,
+    score=IntType, match_name=StringType, age=IntType})
+
+Warnings (0):
+
+Errors (0):
+
+Output files (1):
+File top_two_per_age.csv:
+    name_surname : StringType
+    score : IntType
+    match_name : StringType
+    age : IntType
+\end{lstlisting}
+
+The first line tells us that the no mistake was spotted in the analyzed code (otherwise there would be \verb|NOT OK|).
+Then, the analyzer tells us all variables that are in the global scope when the analysis ended.
+We can see all the Dataframes with their structure.
+Next, we can see that the lists of Warnings and Errors are empty.
+Finally, there is the \verb|Output files| summary with the \verb|top_two_per_age.csv| file structure.
+The analyzer is able to tell us what columns the file contains as well as what are their types.
+
+Now we show what happens when we do some mistake in the code.
+
+The listing~\ref{lst:cs1_misspelled_column} shows the changed line 5 (\verb|neme| instead of \verb|name|) in the code as
+well as the analysis output.
+
+\begin{lstlisting}[caption=Misspelled column on rename function and analysis output, label={lst:cs1_misspelled_column}, captionpos=b]
+    .rename(columns={"neme": "match_name"})
+
+Summary of analysis: NOT OK
+Global data structures (7):
+pd: PandasImport
+attendees_df: DataFrame(columns={age=IntType,
+    name_surname=StringType})
+matches_df: UnresolvedStructure(reason=The values
+    [neme] do not exist in the dataframe)
+scores_df: DataFrame(columns={name_surname=StringType,
+    match_id=IntType, score=IntType})
+scores_with_match_name_df: UnresolvedStructure(
+    reason=Incorrect right argument to merge)
+scores_with_age_df: UnresolvedStructure(reason=
+    Incorrect left argument to merge)
+top_two_per_age_df: UnresolvedStructure(reason=
+    the attribute sort_values of UnresolvedStructure
+    does not exist)
+
+Warnings (0):
+
+Errors (5):
+0: Assign from line 4 to line 5 columns 0 - 44:
+    The columns [neme] do not exist in the dataframe
+1: Assign from line 12 to line 14 columns 0 - 23:
+    Incorrect right argument to merge
+2: Assign from line 16 to line 18 columns 0 - 1:
+    Incorrect left argument to merge
+3: Assign from line 20 to line 24 columns 0 - 31:
+    the attribute sort_values of UnresolvedStructure
+    does not exist
+4: ExpressionStatement on line 26 columns 0 - 48:
+    the attribute to_csv of UnresolvedStructure does not exist
+
+Output files (0):
+\end{lstlisting}
+
+Now we can see that the result of the analysis is \verb|NOT OK|.
+There are five errors in the Errors list.
+The first error tells us that in the statement on lines 4--5 there is a statement where we are trying to access column
+\verb|neme| that does not exist in the Dataframe.
+This is enough for us to spot and fix the mistake in the code.
+Other errors are in this case just consequences of the first error.
+
+Other mistake that we can do is to specify an incorrect argument to a Pandas function.
+The listing~\ref{lst:cs1_incorrect_argument} shows the changed part of the code on the line 13 (\verb|left_or| instead of
+\verb|left_on|) and the analysis output.
+Note that only important parts of the analysis output are shown.
+
+\begin{lstlisting}[caption=Incorrectly specified argument and analysis output, label={lst:cs1_incorrect_argument}, captionpos=b]
+    .merge(matches_df, left_or="match_id", right_on="id") \
+
+Summary of analysis: NOT OK
+/* snip */
+Errors (4):
+0: Assign from line 12 to line 14 columns 0 - 23:
+    Got unexpected keyword arguments [left_or]
+/* snip */
+\end{lstlisting}
+
+The result of the analysis is \verb|NOT OK| as expected and there is an error saying that there was an unexpected
+keyword argument \verb|left_or| on the lines 12--14.
 
 
 \paragraph{Case Study \#2:} Uncertainty from the user, multiple possible values \\
 
-Next case study.
+Next case study shows how the Pandalyzer behaves when there is some uncertainty such as an input from the user.
+It also proves that the Pandalyzer is able to handle non-trivial control flow such as if-statements, functions and
+early returns.
+
+The code for this case study can be seen in the listing~\ref{lst:cs2_code}.
+
+\begin{lstlisting}[caption=Code of the second case study in Pandas, label={lst:cs2_code}, captionpos=b]
+import pandas as pd
+
+
+def get_country_dataframe(country):
+    if country == "Germany":
+        return pd.read_csv("de.csv")
+    elif country == "Austria":
+        return pd.read_csv("au.csv")
+    else:
+        return pd.read_csv("world.csv")
+
+
+def get_dataframe_from_user():
+    country = input("Select a country: ")
+    return get_country_dataframe(country)
+
+
+user_df = get_dataframe_from_user()
+user_df[["germany_specific_column"]].to_csv("output.csv")
+\end{lstlisting}
+
+And the configuration file is shown in the listing~\ref{lst:cs2_config}.
+
+\begin{lstlisting}[caption=config.toml file for the second case study, label={lst:cs2_config}, captionpos=b]
+[de.csv]
+germany_specific_column = "string"
+common_column = "int"
+
+[au.csv]
+common_column = "int"
+
+[world.csv]
+common_column = "int"
+\end{lstlisting}
+
+There are two functions.
+The first (\verb|get_country_dataframe|) returns the Dataframe for the specified country or the Dataframe for the whole
+world if the country is not known.
+The second function (\verb|get_dataframe_from_user|) gets the country from the user and returns the result of
+\verb|get_country_dataframe| function.
+However, we do not know the result of the \verb|input| function, so we are not able to resolve which Dataframe will
+be returned.
+Moreover, we are trying to access the column \verb|germany_specific_column| which exists only if the user inputs
+the value \verb|Germany|.
+So the program can (but does not have to) crash.
+
+The listing~\ref{lst:cs2_analysis_output} shows the output of the Pandalyzer given the input from the
+listing~\ref{lst:cs2_code} and the configuration file from listing~\ref{lst:cs2_config}.
+
+\begin{lstlisting}[caption=Analysis output of the second case study, label={lst:cs2_analysis_output}, captionpos=b]
+Summary of analysis: OK
+/* snip */
+Warnings (6):
+0: Assign on line 14 columns 4 - 41:
+    Unable to resolve result of input
+1: IfStatement from line 5 to line 10 columns 4 - 39:
+    Unable to check unknown strings on equality
+2: IfStatement from line 5 to line 10 columns 4 - 39:
+    Unable to recognize the bool value in the
+    if statement test - branching.
+3: IfStatement from line 7 to line 10 columns 4 - 39:
+    Unable to check unknown strings on equality
+4: IfStatement from line 7 to line 10 columns 4 - 39:
+    Unable to recognize the bool value in the
+    if statement test - branching.
+5: ExpressionStatement on line 19 columns 0 - 57:
+    Second branch of execution failed with reason:
+        Both execution branches failed.
+        Branch1:
+            The keys [germany_specific_column] do not
+            exist in the dataframe,
+        Branch2:
+            The keys [germany_specific_column] do not
+            exist in the dataframe
+
+Errors (0):
+
+Output files (1):
+File output.csv:
+    germany_specific_column : StringType
+
+\end{lstlisting}
+
+This time the output is more complicated.
+The result of the analysis is \verb|OK| since the fact that some branch can fail does not mean that the whole program is
+incorrect.
+However, there are five warnings.
+The first warnings is related to the \verb|input| function itself.
+It just tells the user that an uncertainty occurred.
+The next four warnings are related to the fact that we are trying to compare a string with unknown value and then
+trying to branch based on the result.
+The Pandalyzer tells us that it is branching (executing both branches) in that case.
+The last warning is the most important.
+It is less readable, but that is just because the problem is complicated.
+It tells us that one of the branches failed, and it gives us the reason.
+The reason is that both branches in the second branch failed, and it gives us the reasons.
+The Pandalyzer also tells us that there is an output file.
+It corresponds to the branch of execution in which the user input was \verb|Germany|.
 
 
 \paragraph{Case Study \#3:} Regex config, column compatibility \\
@@ -92,7 +332,7 @@ This time we use the regex feature of our configuration.
 The \verb|config.toml| file will be as shown in listing~\ref{lst:cs3_config}.
 
 \begin{lstlisting}[caption=config.toml of the second case study, label={lst:cs3_config}, captionpos=b]
-[^\d{2}_\d{2}_\d{4}_production\.csv$]
+r[^\d{2}_\d{2}_\d{4}_production\.csv$]
 hour = "int"
 production = "int"
 note = "string"
@@ -111,8 +351,8 @@ import pandas as pd
 tuesday_df = pd.read_csv("30_04_2024_production.csv")
 wednesday_df = pd.read_csv("31_04_2024_production.csv")
 
-tuesday_df.insert(0, "day", 30)
-wednesday_df.insert(0, "day", 31)
+tuesday_df["day"] = 30
+wednesday_df["day"] = 31
 
 agg_df = pd.concat([tuesday_df, wednesday_df])
 
@@ -120,6 +360,59 @@ low_production_df = agg_df[agg_df["production"] < 400]
 
 low_production_df.to_csv("aggregate_production.csv")
 \end{lstlisting}
+
+The output of the Pandalyzer given the input from listing~\ref{lst:cs3_code} and the configuration from
+listing~\ref{lst:cs3_config} is shown in the listing~\ref{lst:cs3_analysis_output}
+
+\begin{lstlisting}[caption=Analysis output of the third case study, label={lst:cs3_analysis_output}, captionpos=b]
+Summary of analysis: OK
+Global data structures (5):
+pd: PandasImport
+tuesday_df: DataFrame(columns={hour=IntType,
+    production=IntType, note=StringType, day=IntType})
+wednesday_df: DataFrame(columns={hour=IntType,
+    production=IntType, note=StringType, day=IntType})
+agg_df: DataFrame(columns={hour=IntType,
+    production=IntType, note=StringType, day=IntType})
+low_production_df: DataFrame(columns={hour=IntType,
+    production=IntType, note=StringType, day=IntType})
+
+Warnings (0):
+
+Errors (0):
+
+Output files (1):
+File aggregate_production.csv:
+    hour : IntType
+    production : IntType
+    note : StringType
+    day : IntType
+\end{lstlisting}
+
+As expected, the result of the analysis is \verb|OK| and the lists of Warnings and Errors are empty.
+There is one output file \verb|aggregate_production.csv| with the correct structure.
+The Pandalyzer was also able to match the input filenames with the regex in the configuration file.
+An important part of the analysis is the \verb|concat| function.
+The result of the function has the same structure as the inputs, but it requires the inputs to have the same structure.
+Let us see what the analyzer outputs if we change the structure of one of the Dataframes.
+The listing~\ref{lst:cs3_incompatible_concat} shows the changed line TODO\ldots
+
+\begin{lstlisting}[caption=Incompatible Dataframes to concat operation and analysis output, label={lst:cs3_incompatible_concat}, captionpos=b]
+tuesday_df["another_column"] = 30
+
+Summary of analysis: NOT OK
+/* snip */
+Errors (3):
+0: Assign on line 9 columns 0 - 46:
+    All dataframes to be concatenated must have
+    the same column structure
+/* snip */
+\end{lstlisting}
+
+The Pandalyzer detected the mistake.
+The result of the analysis is \verb|NOT OK| and there is an error saying that all Dataframes ot be concatenated must
+have the same structure.
+
 
 \paragraph{Case Study \#4:} High uncertainty, user input \\
 This time we focus on
