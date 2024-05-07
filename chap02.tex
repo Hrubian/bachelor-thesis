@@ -334,8 +334,41 @@ We also said that the square-bracket operator accepts a Series of bools.
 So the expression \verb|dataframe["age"] >= 18]| must return a Series of bools.
 But why does this work?
 How can we compare a Series to a number?
-\xxx{TODO}
 
+In Pandas, the Series can be summed, subtracted, multiplied or compared with values that are either Series or a scalar
+values.
+The listing~\ref{lst:vectorized_operations} shows the behaviour of some vectorized operations in Pandas performed in
+the interactive mode.
+
+\begin{lstlisting}[caption=Vectorized operations, label={lst:vectorized_operations}, captionpos=b]
+>>> sr1 = pd.Series([1, 2, 3])
+>>> sr1 + 7
+0     8
+1     9
+2    10
+dtype: int64
+>>> 3 * sr1
+0    3
+1    6
+2    9
+dtype: int64
+>>> sr1 / sr1
+0    1.0
+1    1.0
+2    1.0
+dtype: float64
+>>> sr2 = pd.Series(["a", "b", "c"])
+>>> sr2 * 2
+0    aa
+1    bb
+2    cc
+dtype: object
+>>> sr2 + "x"
+0    ax
+1    bx
+2    cx
+dtype: object
+\end{lstlisting}
 
 \section*{Summary} %===================================================================================================%
 \addcontentsline{toc}{section}{Summary}
