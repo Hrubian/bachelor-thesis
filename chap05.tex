@@ -603,3 +603,11 @@ There are four errors, each explaining one of the mistakes discussed.
 \section*{Summary}
 \addcontentsline{toc}{section}{Summary}
 
+The Pandalyzer is already capable of checking many various Pandas operations.
+It is also able to work with some degree of uncertainty as seen in the case studies.
+In each analysis, the Pandalyzer tells us the analysis result (\verb|OK| or \verb|NOT OK|), active variables in the
+scope, list of warnings, errors and all output files created together with their structure.
+The errors and warnings contain information about the line and column of the source statement, type of the statement
+and some message describing the issue.
+However, to be actually useful in practice, there is a need to implement other Pandas operations and Python constructs.
+The future of the Pandalyzer will be discussed in the Future Work~\ref{sec:future-work} section of the Conclusion
