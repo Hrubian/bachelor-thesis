@@ -200,6 +200,7 @@ structure called Unresolved Structure.
 And if we are not able to resolve the items of the list at all (not even their count), then we remember just the
 information that variable is a list (and we do not constraint the content of the list in any other way).
 
+
 \section{Final proposal}
 
 The only task that is left for us to finish the analysis framework is to combine the Dataframe and Series framework
@@ -208,11 +209,9 @@ with the general abstraction proposed for other types (ints, strings, lists, \ld
 We design a hierarchy of abstract types.
 The higher levels of the hierarchy contain less precise (more abstract) types and the preciseness increases as we go
 down the hierarchy.
-There is the Unresolved Structure at the top of the hierarchy representing some value that we know nothing about (only
-that it exists).
-In the next level of the hierarchy we enrich the unknown value with type, meaning that we remember that the value
-is a string (int, list, Dataframe, \ldots) but we do not know anything else.
-The last level represents different type of knowledge for different types, specifically:
+There is the Unresolved Structure at the bottom of the hierarchy representing a value that we were not able to derive.
+This is usually a result of an invalid operation or a generally an invalid state.
+When we go up the hierarchy, the next level represents different type of knowledge for different types, specifically:
 
 \begin{itemize}
     \item For elementary types (string, int, float) it is a complete knowledge of the value.
@@ -221,7 +220,9 @@ The last level represents different type of knowledge for different types, speci
     of abstraction from the hierarchy
 \end{itemize}
 
-The Figure~\ref{fig:abstract_hierarchy} shows the idea.
+When we go even one level higher, we abstract the concrete value to its type, meaning that we remember that the value
+is a string (int, list, Dataframe, \ldots) but we do not know anything else about it.
+The idea is shown in the Figure~\ref{fig:abstract_hierarchy}.
 The Value means a specific value such as string literal or a number.
 The Content represents an abstract type in the hierarchy.
 
@@ -232,16 +233,40 @@ The Content represents an abstract type in the hierarchy.
     \includegraphics[scale=0.5]{img/Hierarchy}
 \end{figure}
 
-\xxx{TODO this is actually just a semi-lattice? but we do not need the opposite bound}
-There is another type called Nondeterministic Structure.
-It is a structure holding two sub-structures, representing two options of how the structure could look.
-This is useful for example when we know that the structure can be either a Some Series or a Some List.
-In that case we would normally need to use the supremum - Unresolved Structure, but now we can just use
-\verb|NondeterministicStructure(Some Series, Some List)|.
-Other case when this can be useful is when we have two (or more by nesting many Nondeterministic Structures)
-possibilities what a Dataframe Structure could look like.
-This will mostly happen when there is a branching (if-statement) in the program, and we are not able to resolve
-which branch we should go.
+To satisfy the definition of a Lattice, every pair of elements must have a supremum and infimum.
+It can be seen from the Figure~\ref{fig:abstract_hierarchy} that the infimum exists.
+For two different values of the same type \verb|String("first")| and \verb|String("second")|, the infimum is
+\verb|SomeString|.
+For the two different types \verb|String("str")| and \verb(Int(7))|, the infimum is \verb|UnresolvedStructure|.
+The other cases are analogous and are left as an exercise for the reader.
+
+However, the idea misses suprema.
+For that purpose we define another structure called \verb|NondeterministicStructure|.
+The supremum of two elements of the hierarchy \verb|a| and \verb|b| is \verb|NondeterministicStructure(a, b)|.
+The idea is also applicable recursively, so the value \\
+\begin{verbatim}
+NondeterministicStructure(
+    NondeterministiStructure(
+        SomeString,
+        SomeInt
+    ),
+    SomeSeries
+)
+\end{verbatim}
+is a valid element of the hierarchy.
+The idea is shown in the Figure~\ref{fig:nondeterministic_structure}
+With this idea, the hierarchy is finally a Lattice.
+Note that it is not a Complete Lattice as the whole hierarchy does not have a supremum.
+
+\begin{figure}[H]
+    \caption{Nondeterministic structure}
+    \label{fig:nondeterministic_structure}
+    \centering
+    \includegraphics[scale=0.5]{img/unresolved_structure}
+\end{figure}
+
+The Nondeterministic Structure will mostly occur when there is a branching (e.g.~an if-statement) in the program, and we are not
+able to resolve which branch we should go.
 So the Nondeterministic Structure is a substitute that we need to use since we do not use the power set as the abstract
 lattice anymore.
 
@@ -261,9 +286,8 @@ But, again, we do not know the index values.
 In such situation there is no other option then just returning Some Dataframe.
 
 Another possible problem can be an unknown value propagation, meaning that when there is a value with any uncertainty
-(e.g.\ Unresolved Structure or Some value), using this value in an operation will in most cases lead to an operation
-result with an uncertainty as well.
-
+(e.g.\ Nondeterministic Structure or Some value), using this value in an operation will in most cases lead to an
+operation result with an uncertainty as well.
 
 \section*{Summary}
 \addcontentsline{toc}{section}{Summary}
