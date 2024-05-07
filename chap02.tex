@@ -308,8 +308,19 @@ Having operation works somewhat like a where operation on a summary rows - where
 In having clause, we can use any aggregate function in a predicate and then filter the summary rows based on such
 predicate.
 
-Pandas can do this with the filter function. \xxx{TODO}
+In Pandas, this is can be done in many ways, but the usual one involves the filter function and lambdas.
+Example of such usage is shown in the listing~\ref{lst:pandas_having}.
 
+\begin{lstlisting}[caption=Having in Pandas, label={lst:pandas_having}, captionpos=b]
+dataframe = ... # initial dataframe
+
+# Group the dataframe by agg_column and return
+# the columns that are in a work_department
+# with an average salary higher than 10 000
+dataframe \
+    .groupby(by=["work_department"]) \
+    .filter(lambda x: x["salary"].mean() > 10000)
+\end{lstlisting}
 
 
 \subsection{Vectorized operations}

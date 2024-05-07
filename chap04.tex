@@ -425,7 +425,7 @@ column2 = "int"
 [file2.csv]
 columnA = "int"
 columnB = "int"
-columnC = "int"
+columnC = "bool"
 \end{lstlisting}
 
 As seen in the Listing~\ref{lst:config_example}, the format is inspired by a well known configuration format
@@ -446,7 +446,8 @@ The idea is shown in the Listing~\ref{lst:regex_example}.
 
 \begin{lstlisting}[caption=An example regex-based file definition, label={lst:regex_example}, captionpos=b]
 r[^\d\d_file\.csv]
-col = "string"
+col1 = "string"
+col2 = "int"
 \end{lstlisting}
 
 This means that files with names such as 01\_file.csv, 02\_file.csv, 99\_file.csv have one column of type string.
