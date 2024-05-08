@@ -169,7 +169,7 @@ It can then be extended to the variants with sets in a straightforward way.
     We should check that the columns that are used for joining exist in the original Dataframe and that the resulting
     Dataframe is valid---there are no duplicate columns.
 
-    \item GROUP BY \xxx{TODO}
+    \item GROUP BY
 
     The GROUP BY operation does not return a Dataframe.
     It returns an object called DataFrameGroupBy.
@@ -178,6 +178,7 @@ It can then be extended to the variants with sets in a straightforward way.
     original Dataframe.
 
     \item Plus operator (vectorized)
+
     The Plus operator should work on a pair of two scalars, two series and a pair of scalar and series.
     If only the types are known, we perform just the type check.
     If the values are both known, we perform the full operation.
