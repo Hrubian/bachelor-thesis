@@ -4,7 +4,7 @@ In this chapter we explain the Abstract Interpretation from the theoretical poin
 At first, we recall some basic mathematical definitions such as partial order or supremum and infimum.
 Then we use this knowledge to define lattices and Galois connections, that are the core concepts of Abstract
 Interpretation.
-We also formalize a program - its syntax, semantics, trace and Collecting semantics.
+We also formalize a program---its syntax, semantics, trace and Collecting semantics.
 At last, we use all this knowledge to explain the Abstract Interpretation method.
 This chapter is greatly inspired by Introduction to Abstract Interpretation by B.~Blanchet\cite{Blanchet:2002:AI}.
 He also covers more advanced topics that are not needed for our purposes, so I would refer the more curious readers
@@ -50,21 +50,21 @@ Notice that the approximation of \verb|d| and \verb|e| would be even more precis
 are greater or less than 1.
 
 This example shows that when we know the approximations of the input values, we are able to make statements about the
-behaviour of the program.
+behavior of the program.
 In abstract interpretation, we try to interpret (execute) the given program with approximated input values and try to
 prove that the output is in certain bounds or that it does not crash in any (or some) case.
-Such analysis is always correct, but the results are not precise - it is an approximation of the behaviour of the program.
-Also note that this can be actually useful in practice since in many programs the variables usually are bounded due to
+Such analysis is always correct, but the results are not precise---it is an approximation of the behavior of the program.
+Also note that this can be actually useful in practice since in many programs, the variables usually are bounded due to
 their semantics.
-For example the hour of a day will always be a number between 0 and 24 (The answer to the question of why not just 23 is
+For example, the hour of a day will always be a number between 0 and 24 (The answer to the question of why not just 23 is
 left as an exercise to the reader),
 number of workers in a factory will be always non-negative, election results of a political party will always be
 between 0 and 100 and a sum of degrees of an undirected graph will always be an even number.
 
 But what information should we remember for the variables in the program?
-In the simplest case we can just remember whether the values are positive, negative or zero.
+In the simplest case, we can just remember whether the values are positive, negative or zero.
 More advanced case (the one that we use in the example above) can use intervals.
-Generally we use a union of arbitrary disjunctive (for simplicity) sets.
+Generally, we use a union of arbitrary disjunctive (for simplicity) sets.
 Then the input constraints can look like this:
 \begin{gather*}
     a \in {1, 2, 3} \cup (0, 1)\\
@@ -86,13 +86,13 @@ Some examples:
 %    \item Tabular data - the topic of this thesis
 \end{itemize}
 
-Another possible application - Tabular data - will be covered in the chapter~\ref{ch:putting-it-all-together}.
+Another possible application---Tabular data---will be covered in the chapter~\ref{ch:putting-it-all-together}.
 
 
 \section{Lattices} %===================================================================================================%
 
 We first recall few already well-known definitions (Poset, Supremum, Infimum) and then use this
-to state the definitions of more advanced objects (Lattice, Complete Lattice, Galois Connection)that will be later
+to state the definitions of more advanced objects (Lattice, Complete Lattice, Galois Connection) that will be later
 essential for formally defining the Abstract Interpretation framework.
 
 \begin{defn}[Partial order]
@@ -130,7 +130,7 @@ Last thing that we need before defining a Lattice are the definitions of supremu
     Lower bound of $R$ in $S$ is $a \in S$ such that $\forall x \in R: a \leq x$.
 
     An upper bound $s$ of $R$ in $S$ is called a supremum (we use the symbol $\sup$)
-    if for all upper bounds $b$ of $R$ $S$ holds that $s \leq b$.
+    if for all upper bounds $b$ of $R$ in $S$ holds that $s \leq b$.
 
     A lower bound $w$ of $R$ in $S$ is called an infimum (we use the symbol $\inf$)
     if for all lower bounds $b$ of $R$ in $S$ holds that $w \geq b$.
@@ -159,11 +159,11 @@ That also means that every Complete Lattice is a Lattice.
     All $(\mathbb{R}, \leq), (\mathbb{Q}, \leq), (\mathbb{Z}, \leq)$ are Complete Lattices.
 
     Also, a power set of a set with inclusion as an ordering is a Complete Lattice.
-    The supremum of a set of sets on power set can be defined as the union of the sets and the infimum can be defined as
-    their intersection.
+    The supremum of a set of sets on a power set can be defined as the union of the sets, and the infimum can be defined
+    as their intersection.
 
     The pair $(V, reachability)$ for a directed acyclic graph is \textbf{not} a lattice.
-    For example if we take vertices from different weakly connected components, they will not have supremum and infimum.
+    For example, if we take vertices from different weakly connected components, they will not have a supremum and infimum.
 \end{example}
 
 
@@ -171,7 +171,7 @@ That also means that every Complete Lattice is a Lattice.
 
 To properly talk about analyzing programs, we first need to define what a program is.
 We define a simple syntax, and then we add its semantics.
-So let us start by stating few definitions regarding the syntax:
+So let us start by stating a few definitions regarding the syntax:
 
 \begin{defn}[Expression]
     Expression has the following recursive definition:
@@ -195,7 +195,6 @@ So let us start by stating few definitions regarding the syntax:
 
 In our model, we represent programs as a function that maps program locations (think addresses in memory) to statements
 (CPU instructions) at the given location.
-Formally:
 
 \begin{defn}[Program]
     Program is a function $Prog$ from integers to Statements.
@@ -203,7 +202,7 @@ Formally:
     \[Prog: \mathbb{Z} \rightarrow Statements\]
 \end{defn}
 
-The state of the running program (process) at a given time $t$ is given by the program counter($pc$), saying which
+The state of the running program (process) at a given time $t$ is given by the program counter ($pc$), saying which
 command is to be executed next, and the set of the variables in the environment $Env$.
 The environment $Env$ is a table that assigns values to variables in a scope.
 
@@ -255,7 +254,7 @@ Galois Connection is a pair of functions connecting two Lattices.
 We call the first Lattice ($L_1$) the \textbf{concrete lattice} and the second lattice ($L_2$) the \textbf{abstract lattice}.
 Then the function $\alpha$ is called the \textbf{abstraction} and $\gamma$ is the \textbf{concretization}.
 
-In the context of abstract interpretation the concrete lattice is a power set (ordered by inclusion) of a set of values
+In the context of Abstract Interpretation, the concrete lattice is a power set (ordered by inclusion) of a set of values
 of variables of the program, while the abstract lattice is the set of values we work with during the program analysis.
 
 \subsection*{Examples of Galois Connections}
@@ -264,8 +263,8 @@ of variables of the program, while the abstract lattice is the set of values we 
 
     The concrete lattice is $\powerset{\mathbb{R}}$ and the abstract lattice is $\powerset{\{+, -, 0\}}$ (ordered by
     inclusion).
-    The elements of abstract lattice say what signs can the corresponding element of concrete lattice have.
-    For example the set $\{+, 0\}$ represents a non-negative number and $\{+, -\}$ represents a non-zero number in the
+    The elements of abstract lattice say what signs the corresponding element of concrete lattice can have.
+    For example, the set $\{+, 0\}$ represents a non-negative number and $\{+, -\}$ represents a non-zero number in the
     concrete lattice.
 
     The definition of abstraction function is as follows:
@@ -321,10 +320,10 @@ Note that the set of all traces ordered by inclusion form a complete lattice.
 \section{The method} %=================================================================================================%
 
 In the previous parts of this chapter, we defined Lattices.
-We defined the concrete lattice - the normal world where computer runs.
-We also defined the abstract lattice - the world where the analysis takes place.
-Then we created a semantics of the statements and the expressions in the concrete lattice.
-Finally, we connected the two worlds - concrete and abstract lattice - with Galois Connection, which allows us to
+We defined the concrete lattice---the normal world where computer runs.
+We also defined the abstract lattice---the world where the analysis takes place.
+Then we created the semantics of the statements and the expressions in the concrete lattice.
+Finally, we connected the two worlds---concrete and abstract lattice---with Galois Connection, which allows us to
 traverse between the two.
 
 What we are still missing is the semantics of the statements and expressions in the abstract lattice.
@@ -332,7 +331,7 @@ This is where we finally use the fact that the connection between the concrete a
 Connection.
 We show that the abstract semantics can be derived from the semantics of the concrete lattice and the Galois Connection,
 which is the last piece of the Abstract Interpretation puzzle.
-We first define the abstract semantics of values, operators and environment variables.
+We first define the abstract semantics of values, operators, and environment variables.
 Then we move to the expressions and statements.
 
 \begin{itemize}
@@ -374,13 +373,13 @@ Then we move to the expressions and statements.
         The case, when $Prog(pc) = if \: E \: goto \: n$ is a bit tricky.
         There are two possibilities of what can happen.
         The first is that the $[E]_a$ contains only zero, or it does not contain zero at all.
-        In that case we know which branch should be taken, and we just update the $pc$ accordingly.
+        In that case, we know which branch should be taken, and we just update the $pc$ accordingly.
         The other case happens when the $[E]_a$ contains both zero and non-zero elements.
-        Then we do not know which branch should be taken so the execution must split into two branches and both options
+        Then we do not know which branch should be taken, so the execution must split into two branches, and both options
         must continue separately.
 
         \item
-        If $Prog(pc) = halt$ then we just stop the execution of the program (or the given branch if whe execution was
+        If $Prog(pc) = halt$ then we just stop the execution of the program (or the given branch if the execution was
         split).
 
         \item
@@ -390,7 +389,7 @@ Then we move to the expressions and statements.
 
 So how does the method work?
 We abstract the user inputs and then interpret the program over the abstract lattice (hence the name Abstract
-Interpretation) using the abstract definitions of Expressions, Statements etc.
+Interpretation) using the abstract definitions of Expressions, Statements, etc.
 We branch when we do not know what the next state should be (if statements).
 Then, when we want to know some property of the program, we just observe the abstract version of the variables we care
 about or check whether some branches halted with failure.
@@ -398,7 +397,7 @@ about or check whether some branches halted with failure.
 \section*{Summary}
 \addcontentsline{toc}{section}{Summary}
 
-Abstract Interpretation is program analysis method.
+Abstract Interpretation is a program analysis method.
 We can imagine it as approximating the interpretation of the program (like normal interpreters do) with incomplete
 information about the user input, branching when we do not know.
 Instead of a standard semantics of a program, we take a collecting semantics as an extension over all possible user inputs,
