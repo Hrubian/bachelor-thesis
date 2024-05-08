@@ -3,7 +3,7 @@
 Our goal for this chapter is to present the implementation of the Pandalyzer, an analysis tool based on the Abstract
 Interpretation framework proposed in the previous chapter.
 
-We start by stating the goal of the implementation - what features and functionality should the tool have.
+We start by stating the goal of the implementation---what features and functionality should the tool have.
 Then we present the architecture of the implemented solution from the software engineering point of view.
 We talk about some design decisions done and discuss their consequences.
 The User documentation can be found in the Appendix~\ref{ch:user-documentation}.
@@ -32,18 +32,18 @@ We also want to support reading the DataFrames from a CSV or other file formats 
 Less frequently used operations do not have to be supported, but the set of Pandas operations should be easily
 extensible with other operations.
 
-The tool can be implemented as a command-line application and a user should be able to build and run it on Linux,
-Windows and macOS\@.
+The tool can be implemented as a command-line application, and a user should be able to build and run it on Linux,
+Windows, and macOS\@.
 It should accept a single Python script filename as an argument and should print the analysis result to standard output
 or a file.
 The output format should be configurable.
 
 Another requirement is the ability to continue in the analysis when a mistake in the code is found and the ability
-to handle also mistakes that are not related to Pandas but pure Python. % todo weird
+to handle also some mistakes that are not related to Pandas but are just Python mistakes.
 
-Pandas Dataframes are usually loaded from a CSV files and also written to CSV files.
+Pandas Dataframes are usually loaded from CSV files and also written to CSV files.
 The analyzer should not read or create any CSV files.
-It should accept an information from the user about existing CSV files and the analysis result should contain
+It should accept information from the user about existing CSV files, and the analysis result should contain
 information about which CSV files would be created by the script and what would be their structure.
 
 \section{Architecture}
@@ -64,7 +64,6 @@ Finally, it writes the result of the analysis to the standard output or to an ou
 The text above is a good short description of the tool, but it probably leaves the reader with many questions unresolved.
 In the rest of the chapter, we answer the following questions:
 \begin{itemize}
-%    \item How is the tool run?
     \item How is the parsing done?
     (Section~\ref{subsec:design-decision---parsing-and-ast})
     \item How is the AST represented in the program?
@@ -73,7 +72,7 @@ In the rest of the chapter, we answer the following questions:
     (Section~\ref{subsec:analysis-context})
     \item How are the data structures represented
     (Sections~\ref{subsec:python-structures-representation} and~\ref{subsec:dataframe-and-series-representation})
-    \item How are the Pandas operations and other function checking implemented?
+    \item How are the Pandas operations and other functions checking implemented?
     (Section~\ref{subsec:the-abstract-operations})
     \item How does the tool handle non-deterministic or unknown data?
     (Section~\ref{subsec:nondeterminism})
@@ -83,7 +82,7 @@ In the rest of the chapter, we answer the following questions:
 
 \subsection{Design Decision - Parsing and AST}\label{subsec:design-decision---parsing-and-ast}
 
-The tool needs to construct and abstract syntax tree of a Python module.
+The tool needs to construct the abstract syntax tree of a Python module.
 Implementing a Python parser from scratch would be a lot of unnecessary work and a potential source of bugs, so we
 decided to use already existing solutions.
 There is a Python module called \textbf{ast}~\cite{python-ast} capable of parsing a python module and creating an
@@ -92,13 +91,13 @@ However, since it is a Python module, we are not able to use it in Kotlin direct
 We choose an alternative approach.
 We create a Python script that accepts a Python module, creates an abstract syntax tree using the \textbf{ast} module
 and serializes the tree to a json format.
-Then we use Kotlin Serialization~\cite{kotlin-serialization-guide} library to deserialize the json to the kotlin
+Then we use the Kotlin Serialization~\cite{kotlin-serialization-guide} library to deserialize the json to the kotlin
 representation.
 The Python script can be found in the Pandalyzer repo~\cite{pandalyzer} in the path
 /src/main/resources/python\_converter.py and uses serialization ideas from the ast2json Python module~\cite{ast2json}.
 To avoid the need to run the converter script before running the Pandalyzer, the Pandalyzer calls the script instead of
 the user, effectively hiding the information about the existence of the script from the user.
-However, the fact that we use Python script implies that the python needs to be installed on the machine.
+However, the fact that we use a Python script implies that the python needs to be installed on the machine.
 
 \begin{figure}[H]
     \caption{AST representation hierarchy}
@@ -114,7 +113,7 @@ and interfaces (blue boxes).
 
 Each class represents a node in the abstract syntax tree.
 The nodes of the tree have children depending on their semantics.
-For example the node Module has a list of nodes Statements representing the body of the module.
+For example, the node Module has a list of Statement nodes representing the body of the module.
 Another good example is an IfStatement, which has test Expression as a child, list of statements as the body of the
 if-statement and another list of statements as the body of the else branch.
 
@@ -127,8 +126,8 @@ When traversing the AST and interpreting the program, we have to keep track of a
 We also need to store the errors and warnings generated.
 We introduce the Analysis Context structure for this purpose.
 In the implementation, AnalysisContext is an interface providing us with function such as getStruct, upsertStruct,
-addWarning, addError and more.
-There are two classes implementing this interface - GlobalAnalysisContext and FunctionAnalysisContext.
+addWarning, addError, and more.
+There are two classes implementing this interface---GlobalAnalysisContext and FunctionAnalysisContext.
 
 GlobalAnalysisContext is the context that keeps track of all global variables and functions and Python builtin functions
 as well.
@@ -140,12 +139,13 @@ It redirects the addWarning and addError function to the outer analysis context,
 function to the global analysis context in case that it does not know the requested variable.
 This ensures that the concept of global and local variables works properly.
 
-When the analysis is done, the global analysis context has a summarize function, which returns a summary of the analysis.
+When the analysis is done, the global analysis context has a~\verb|summarize| function, which returns a summary of the
+analysis.
 
 \subsection{Python structures representation}\label{subsec:python-structures-representation}
 
 When we discussed the Analysis Context, we said that it keeps all currently active variables.
-We use polymorphism to keep track of variables with dynamically resolved type.
+We use polymorphism to keep track of variables with a dynamically resolved type.
 We define the interface PythonDataStructure.
 Every Python data type has to implement the PythonDataStructure interface.
 The interface contains methods representing what we can do with any Python data type.
@@ -170,9 +170,9 @@ We said that every Python data type has to implement the PythonDataStructure int
 We would like to define abstract versions of standard Python types, meaning PythonString, PythonInt, PythonBool,
 PythonNone, PythonList or PythonDict.
 There are also functions (yes, a function is also a PythonDataStructure).
-This includes (subset of) Python builtin functions such as \verb|print, list, len, int, or abs| as well as other
+This includes (subset of) Python builtin functions \\such~as~\verb|print, list, len, int, or abs| as well as other
 functions defined in the current scope.
-Another things that also implement the PythonDataStructure are imports.
+Another thing that also implements the PythonDataStructure is imported modules.
 Currently, the only supported import is PandasImport, but the implementation can be easily extended by others.
 The Pandas data types support is added by creating DataFrame and Series classes that also implement the PythonDataStructure
 interface.
@@ -183,16 +183,16 @@ There are three ways in which we handle uncertainty.
 The first one corresponds to the SomeString/SomeList/\ldots structures mentioned in the previous chapter.
 Recall that these structures represent the knowledge of the type but the absence of the knowledge of the value.
 In the implementation of Pandalyzer, this concept is represented by the fact that the values inside PythonString,
-PythonList, \ldots are nullable.
-In other words the PythonString(value=null) represents a string with unknown value.
+PythonList,~\ldots are nullable.
+In other words, the PythonString(value=null) represents a string with unknown value.
 
 The second form of uncertainty is the Nondeterministic data structure (also defined in the previous chapter).
-This is uncertainty between two possible values.
+This is the uncertainty between two possible values.
 In the implementation of Pandalyzer, this is represented by NondeterministicStructure with left and right
 PythonDataStructure.
 The NondeterministicStructure(left=PythonList([]), PythonInt(null)) represents a value that is either an empty list or a
-some unknown number.
-When we perform and operation on this structure, it internally performs the operation on both options and then
+some unknown integer.
+When we perform an operation on this structure, it internally performs the operation on both options and then
 returns both results wrapped in a new NondeterministicStructure.
 
 The last form of uncertainty is the UnresolvedStructure (also defined in the previous chapter).
@@ -209,11 +209,11 @@ The boolValue function returns True, False or null.
 If the boolValue of the expression in the condition of the if-statement returns null, we have to execute both the
 branches of the if-statement.
 For this purpose, we introduce the fork-join pattern on the Analysis Context.
-The Analysis Context has functions fork and join.
-The fork function returns new Analysis Context that is equal to the original Analysis Context.
-Then we use the original context to execute the body of the if-statement and we use the forked context to execute
+The Analysis Context has fork and join functions.
+The fork function returns a new Analysis Context that is equal to the original Analysis Context.
+Then we use the original context to execute the body of the if-statement, and we use the forked context to execute
 the else branch of the if-statement.
-Then we call \verb|originalContext.join(forkedContext)| which merges the forked context back to the original context.
+Then we call~\verb|originalContext.join(forkedContext)|, which merges the forked context back to the original context.
 If some of the values differ across the contexts, we create a Nondeterministic Structure and insert the different
 structures there.
 We also combine the warnings and errors of the two contexts.
@@ -234,7 +234,7 @@ The DataFrame class implements the PythonDataStructure interface since it is a t
 It has a single (mutable) map, where the key type is a FieldName, which is a string.
 The FieldType is an enum of all possible types that a column of a Dataframe in Pandas can have.
 Also note that the map is nullable.
-The DataFrame(fields=null) represents a Dataframe with unknown Dataframe Structure.
+The~\verb|DataFrame(fields=null)| represents a Dataframe with unknown Dataframe Structure.
 
 The listing~\ref{lst:series_definition} shows the definition of Series in the Pandalyzer source code.
 
@@ -249,22 +249,22 @@ The Series class also implements the PythonDataStructure interface.
 The Series keeps the type information as well as the label.
 Note that both the fields are nullable, meaning that it can happen that we do not know them.
 
-Another Pandas types implemented in the Pandalyzer are SeriesGroupBy and DataframeGroupBy - the results of the groupby
+Other Pandas types implemented in the Pandalyzer are SeriesGroupBy and DataframeGroupBy---the results of the groupby
 operation.
 
 \subsection{The Abstract Operations}\label{subsec:the-abstract-operations}
 
-When implementing the abstract operations, we have to perform many check before the abstract operation itself.
-We have to validate all the arguments - they can be nondeterministic, they can have null value inside, or, if they are
+When implementing the abstract operations, we have to perform many checks before the abstract operation itself.
+We have to validate all the arguments---they can be nondeterministic, they can have null value inside, or, if they are
 a compound type (list or dictionary), they can have an element that has a null value inside.
 
 We present the idea of the implementation on an example.
 The example is the rename function of a Dataframe.
 It (in its simplest form) accepts an argument containing a dictionary mapping old column names to new column names.
-The rename call can look as follows: \verb|df.rename({"old1": "new1", "old2": "new2"})|.
+The rename call can look as follows:~\verb|df.rename({"old1": "new1", "old2": "new2"})|.
 
-The \verb|df.rename| says that we are accessing |rename| attribute of the |df|.
-The implementation of |attribute| function of DataFrame is shown in the listing~\ref{lst:dataframe_attribute}
+The~\verb|df.rename| says that we are accessing \verb|rename|~attribute of the \verb|df|~variable.
+The implementation of~\verb|attribute|~function of DataFrame is shown in the listing~\ref{lst:dataframe_attribute}
 
 \begin{lstlisting}[caption=Snippet of attribute function of Dataframe, label={lst:dataframe_attribute}, captionpos=b]
 override fun attribute(identifier: Identifier
@@ -279,15 +279,15 @@ override fun attribute(identifier: Identifier
     }
 \end{lstlisting}
 
-The attribute function accepts the \verb|identifier| argument and checks if it is the name of one of the known functions.
+The attribute function accepts the~\verb|identifier|~argument and checks if it is the name of one of the known functions.
 If it finds the right function, it returns the object representing the function (wrapped in an OperationResult).
 
-Then the part \verb|rename(...)| means that we call invoke on the \\ DataFrame\_RenameFunc object.
+Then the part \verb|rename(...)|~means that we call invoke on the \\ DataFrame\_RenameFunc object.
 The invoke function parses the argument, checks that it is a PythonDict, does non-deterministic split if necessary and
 calls the rename function which performs the logic of the rename operation.
-The invoke function is rather technical so we skip that.
+The invoke function is rather technical, so we skip that.
 Let us instead discover what the rename function of DataFrame\_RenameFunc object looks like.
-%It can be seen in the listing~\ref{lst:rename_invoke}
+It can be seen in the listing~\ref{lst:rename_invoke}.
 
 \begin{lstlisting}[caption=The rename function of DataFrame\_RenameFunc, label={lst:rename_invoke}, captionpos=b]
 private fun rename(dict: PythonDict
@@ -375,12 +375,12 @@ Note that the example was altered to fit horizontally on the page.
 The rename function first checks that no value needed to determine the result is null.
 It also checks that both the keys and values are all strings, since that is the only accepted option for a rename
 function.
-The next check ensures that the keys in the dictionary have a corresponding columns in the Dataframe.
+The next check ensures that the keys in the dictionary have the corresponding columns in the Dataframe.
 Last thing that the function checks are collisions and duplicates.
 Then, new Dataframe with the new column structure is returned.
 Note that we fail only if there is something wrong.
 We do not fail if we do not have enough information.
-Rather we return a Dataframe with unknown structure and also add a warning.
+Rather, we return a Dataframe with unknown structure and also add a warning.
 
 \subsection{Design Decision - Configuration file}\label{subsec:configuration-file}
 
@@ -428,19 +428,19 @@ columnB = "int"
 columnC = "bool"
 \end{lstlisting}
 
-As seen in the Listing~\ref{lst:config_example}, the format is inspired by a well known configuration format
+As seen in the Listing~\ref{lst:config_example}, the format is inspired by a well-known configuration format
 TOML~\cite{toml_spec}.
 We chose TOML because of its excellent readability.
 However, we do not use the TOML language but only a small modified subset.
-Definition of each file structure begins with a line containing the (relative or absolute) path to the file in the file
+The definition of each file structure begins with a line containing the (relative or absolute) path to the file in the file
 system surrounded by square brackets.
-Note that this is already not a TOML, since the path to file can also contain dots or slashes which is not permitted in
+Note that this is already not a TOML, since the path to file can also contain dots or slashes which are not permitted in
 TOML specification.
-Following lines contain the specification of columns starting with column name, then equal sign and then the type of the
+The following lines contain the specification of columns starting with column name, then equal sign and then the type of the
 column surrounded by double quotes.
 
-Other feature of the configuration is the regex-based file definition.
-When we prepend the line containing definition of new file structure with the letter \verb|r|, the filename is
+Another feature of the configuration is the regex-based file definition.
+When we prepend the line containing the definition of new file structure with the letter~\verb|r|, the filename is
 considered a regex pattern and each file matching the pattern will have the defined structure.
 The idea is shown in the Listing~\ref{lst:regex_example}.
 
@@ -455,14 +455,14 @@ This means that files with names such as 01\_file.csv, 02\_file.csv, 99\_file.cs
 \section*{Summary}
 \addcontentsline{toc}{section}{Summary}
 
-We presented the Pandalyzer - a data manipulation code analyzer for Python and Pandas.
+We presented the Pandalyzer---a data manipulation code analyzer for Python and Pandas.
 The tool loads the Python code, then parses it and converts it to the AST using a Python script.
 Then the AST is traversed and partially interpreted.
 We keep the Analysis Context with all variables, warnings and errors.
 The data structures are represented by a set of classes implementing the PythonDataStructure.
 The uncertainty is handled using the NondeterministicDataStructure, UnresolvedDatastructure and null values inside the
 typed structures.
-The Pandas structures - Dataframe and Series - correspond to the Dataframe Structure and Series Structure defined
+The Pandas structures---Dataframe and Series---correspond to the Dataframe Structure and Series Structure defined
 in the previous chapter.
 The operations implement a lot of checks that should prevent the user from doing many common mistakes.
 The Pandalyzer also supports config file, where the user can specify the structure of the input csv files.
