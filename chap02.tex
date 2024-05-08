@@ -1,24 +1,23 @@
 \chapter{Data manipulation and Pandas library}
 
 In this chapter, our goal is to explore the world of data manipulation.
-We explain what data structures are usually used and what do the common operations on them look like.
+We explain what data structures are usually used and what the common operations on them look like.
 We will need the information in the next chapters when defining the Abstract Interpretation framework for these data
 structures.
 We show the concepts on Pandas and discuss what Pandas does differently.
-% todo what about the types
 
 \section{Data structures} %============================================================================================%
 
 When we talk about data structure, we usually define it as a way of organizing data in the computer memory.
-However, there are two concepts to distinguish - the interface and the implementation.
+However, there are two concepts to distinguish---the interface and the implementation.
 
-The interface is a set of operations that we are allowed to do with the data structure as a users.
-Good example of a data structure interface can be an Array, List, Dictionary or a Heap.
+The interface is a set of operations that we are allowed to do with the data structure as users.
+A Good example of a data structure interface can be an Array, List, Dictionary or a Heap.
 Implementation on the other hand is how the data structure works under the hood to provide the interface promised.
-To give an example of an implementation of a data structure I mention a binary tree, n-ary heap or a linked list.
+To give an example of an implementation of a data structure, I mention a binary tree, n-ary heap or a linked list.
 
 In this chapter, when talking about data structures, we omit the implementation details, and we focus only on the
-interface of the data structure i.e.\ what operations are provided.
+interface of the data structure, i.e.,~what operations are provided.
 Also, we assume the existence of primitive data types such as integers, floating-point numbers, strings etc.
 
 \begin{defn}[List interface]
@@ -35,7 +34,7 @@ Also, we assume the existence of primitive data types such as integers, floating
 \subsection{Series}
 
 The first and the simplest data structure is usually called Series.
-In its simplest form it is a one-dimensional data structure holding data of some primitive data type.
+In its simplest form, it is a one-dimensional data structure that holds data of some primitive data type.
 It supports a List interface, so random access based on integer indexing is supported as well as adding, removing and
 modifying items.
 
@@ -83,7 +82,7 @@ series.drop("fifth", inplace=True)
 
 \end{lstlisting}
 
-Contrary to what we said, Series in Pandas is a heterogeneous data structure - it is able to hold values of different
+Contrary to what we said, Series in Pandas is a heterogeneous data structure---it is able to hold values of different
 types together.
 So the code showed in Listing~\ref{lst:series_heterogeneous} is completely valid Pandas code.
 
@@ -103,13 +102,13 @@ The explanatory visualization of a Series can be found in the Figure~\ref{fig:se
     \includegraphics[scale=0.4]{img/Series}
 \end{figure}
 
-\subsection{Dataframe} % todo csv, excel, ...
+\subsection{Dataframe}
 
 Dataframe is a two-dimensional tabular data structure.
-A good way to look at a Dataframe is to see it as a Dictionary, where the keys are names of a columns of a table
+A good way to look at a Dataframe is to see it as a Dictionary, where the keys are names of the columns of a table
 and values are Series representing the columns themselves.
 This also means that the Dataframe supports indexing of columns based on column names and integer-based indexing of rows.
-Listing \ref{lst:dataframe_basics} shows basic work with the Dataframe in Pandas.
+Listing~\ref{lst:dataframe_basics} shows basic work with the Dataframe in Pandas.
 
 \begin{lstlisting}[caption=Working with Dataframe in Pandas, label={lst:dataframe_basics}, captionpos=b]
 import pandas as pd
@@ -159,6 +158,9 @@ The explanatory visualization of a Dataframe can be found in the Figure~\ref{fig
     \includegraphics[scale=0.4]{img/Dataframe}
 \end{figure}
 
+The Dataframe is usually loaded from a CSV file via the \verb|read_csv| function, and the Dataframe that is the result
+of the computation is usually stored to another CSV file via the \verb|to_csv| function.
+
 
 \section{Common operations} %==========================================================================================%
 
@@ -166,7 +168,7 @@ To actually manipulate the data into some useful form, we need operations that a
 adding and removing elements.
 The operations that are commonly used in data manipulation were greatly influenced by the operations on relational
 databases and the SQL language.
-However, they are usually more flexible and customizable. % todo explain more
+However, they are usually more flexible and customizable.
 
 \subsection{Relational operations}
 
@@ -194,7 +196,7 @@ column = dataframe["column2"]
 
 Alternatively, the filter function can be also used for this purpose.
 The important information for us will be that the operation returns a Dataframe with a different column structure
-than the input Dataframe - it removes non-specified columns.
+than the input Dataframe---it removes non-specified columns.
 
 The SELECT statement in SQL can also do more than just selecting a subset of columns.
 It can also apply aggregating function when used with group by.
@@ -203,8 +205,8 @@ This option is covered later when we talk about the GROUP BY operation.
 \paragraph{WHERE} \leavevmode \\
 
 The WHERE statement in SQL filters out the rows that do not match a given predicate.
-In this case Pandas was also able to make use of the square-brackets operator.
-This time the operator accepts a Series of bool values and uses just the columns of a Dataframe with index same as
+In this case, Pandas was also able to make use of the square-brackets operator.
+This time the operator accepts a Series of bool values and uses just the columns of a Dataframe with index the same as
 some True value in the Series.
 The Series of bools is usually (but not necessarily) created using vectorized operations.
 The listing~\ref{lst:pandas_where} shows the usage.
@@ -236,7 +238,7 @@ renamed_dataframe = dataframe.rename(
 
 \paragraph{ORDER BY} \leavevmode \\
 
-ORDER BY is used to sort the data by some column.
+ORDER BY is used to sort the data by some columns.
 Pandas can do the same using the sort\_values function.
 The example usage can be seen in the listing~\ref{lst:pandas_orderby}
 
@@ -253,7 +255,7 @@ Note that the operation does not change the column structure of the Dataframe.
 \paragraph{JOIN} \leavevmode \\
 
 Join operation is used to combine rows from two tables based on some related columns.
-There are four types of join - inner, left, right and outer.
+There are four types of join---inner, left, right and outer.
 Inner join returns rows that have matching rows in both tables.
 Left join returns all rows from the left table and all matched rows from the right table.
 Right join returns all rows from the right table and all matched rows from the left table.
@@ -261,7 +263,7 @@ And outer join returns rows where there is a match in either of the tables.
 
 Pandas has a function called merge for this purpose.
 It accepts two Dataframes and returns their corresponding join.
-Besides the already mentioned joins, merge also supports a cross join, which is essentially a cartesian product of
+Besides the already mentioned joins, merge also supports a cross-join, which is essentially a cartesian product of
 two sets of rows.
 The listing~\ref{lst:pandas_join} shows how the merge function can be used as well as what parameters does the
 function accept.
@@ -288,9 +290,9 @@ cross = pd.merge(
 
 The group by operation aggregates the rows based on specified columns.
 It does not return normal rows but summary rows, which we can apply aggregate functions on.
-Good example of an aggregate function can be max, min or sum.
+A Good example of an aggregate function can be max, min or sum.
 
-Pandas has a function with the same name - groupby.
+Pandas has a function with the same name---groupby.
 The function returns a DataframeGroupBy object, which we can apply aggregate functions on.
 The listing~\ref{lst:pandas_groupby} shows the usage
 
@@ -304,11 +306,11 @@ dataframe.groupby(by=["work_department"])["salary"].mean()
 
 \paragraph{HAVING} \leavevmode \\
 
-Having operation works somewhat like a where operation on a summary rows - where group by was already applied.
+Having operation works somewhat like a where operation on a summary rows---where group by was already applied.
 In having clause, we can use any aggregate function in a predicate and then filter the summary rows based on such
 predicate.
 
-In Pandas, this is can be done in many ways, but the usual one involves the filter function and lambdas.
+In Pandas, this can be done in many ways, but the usual one involves the filter function and lambdas.
 Example of such usage is shown in the listing~\ref{lst:pandas_having}.
 
 \begin{lstlisting}[caption=Having in Pandas, label={lst:pandas_having}, captionpos=b]
@@ -331,13 +333,13 @@ When we discussed the SQL WHERE clause, we came across the following line of cod
 
 We said that this line of code filters out the rows where the age is less than 18.
 We also said that the square-bracket operator accepts a Series of bools.
-So the expression \verb|dataframe["age"] >= 18]| must return a Series of bools.
+So the expression~\verb|dataframe["age"] >= 18]| must return a Series of bools.
 But why does this work?
 How can we compare a Series to a number?
 
 In Pandas, the Series can be summed, subtracted, multiplied or compared with values that are either Series or a scalar
 values.
-The listing~\ref{lst:vectorized_operations} shows the behaviour of some vectorized operations in Pandas performed in
+The listing~\ref{lst:vectorized_operations} shows the behavior of some vectorized operations in Pandas performed in
 the interactive mode.
 
 \begin{lstlisting}[caption=Vectorized operations, label={lst:vectorized_operations}, captionpos=b]
@@ -375,8 +377,8 @@ dtype: object
 
 We covered two common data structure interfaces used in data analysis - Series and Dataframe.
 Series is a one-dimensional List-like data structure with support for index and an axis label.
-Data frame is a two-dimensional structure - a dictionary of columns.
-The whole dataframe can have an index associated and the column of a Dataframe can be seen as a Series.
+Data frame is a two-dimensional structure---a dictionary of columns.
+The whole dataframe can have an index associated, and the column of a Dataframe can be seen as a Series.
 Many operations in the data manipulation libraries are influenced by the SQL language operations such as join, select,
 group by, where, order by etc.
 The data structures also support vectorized operations like sums, products or comparing.
