@@ -24,11 +24,11 @@ There are, however, many different operations with multiple Dataframes.
 We show that Pandalyzer is able to check input for all these operations and determine their output.
 
 In this case study, we work with data from a sport competitions agency.
-We get a csv file with competitions that they organized.
-We also get a csv file with all attendees of these competitions.
+We get a CSV file with competitions that they organized.
+We also get a CSV file with all attendees of these competitions.
 The last file contains information about the number of points that an attendee got from a specific competition.
 
-The~\verb|config.toml| (and the csv column structure) is shown in the listing~\ref{lst:cs1_config}
+The~\verb|config.toml| (and the CSV column structure) is shown in the listing~\ref{lst:cs1_config}
 
 \begin{lstlisting}[caption=config.toml of the first case study, label={lst:cs1_config}, captionpos=b]
 [attendees.csv]
@@ -46,7 +46,7 @@ match_id = "int"
 score = "int"
 \end{lstlisting}
 
-Our goal is to create a csv file called top\_two\_per\_age.csv that contains the top two attendees per age per sport match
+Our goal is to create a CSV file called top\_two\_per\_age.csv that contains the top two attendees per age per sport match
 together with the sport match name.
 
 The listing~\ref{lst:cs1_code} shows how that could be implemented in Pandas.
@@ -339,7 +339,7 @@ production = "int"
 note = "string"
 \end{lstlisting}
 
-The record in the \verb|config.toml|~file says that all the csv files with the name dd\_mm\_yyyy\_production.csv have the
+The record in the \verb|config.toml|~file says that all the CSV files with the name dd\_mm\_yyyy\_production.csv have the
 specified columns structure.
 The regex feature is useful for large number of same-structured files with similar names (different only in date,
 number, etc.).

@@ -42,7 +42,7 @@ The Listing~\ref{lst:series_basics} shows basic work with the Series data struct
 
 \begin{lstlisting}[caption=Working with Series in Pandas, label={lst:series_basics}, captionpos=b]
 import pandas as pd
-# Creating series
+# Creating Series
 series = pd.Series([1, 1, 2, 3, 5, 8])
 
 # Adding an element
@@ -66,7 +66,7 @@ Listing~\ref{lst:series_index} shows how the work with index works in Pandas.
 \begin{lstlisting}[caption=Index on a Series, label={lst:series_index}, captionpos=b]
 import pandas as pd
 
-# Creating series with index
+# Creating Series with index
 data = [1, 2, 3, 4]
 index = ["first", "second", "third", "fourth"]
 series = pd.Series(data=data, index=index)
@@ -89,7 +89,7 @@ So the code showed in Listing~\ref{lst:series_heterogeneous} is completely valid
 \begin{lstlisting}[caption=Heterogenous Series, label={lst:series_heterogeneous}, captionpos=b]
 import pandas as pd
 
-# Create a series of values with different types
+# Create a Series of values with different types
 series = pd.Series([0, True, "two", "three", 4])
 \end{lstlisting}
 
@@ -113,7 +113,7 @@ Listing~\ref{lst:dataframe_basics} shows basic work with the Dataframe in Pandas
 \begin{lstlisting}[caption=Working with Dataframe in Pandas, label={lst:dataframe_basics}, captionpos=b]
 import pandas as pd
 
-# Create a dataframe from a map of columns
+# Create a Dataframe from a map of columns
 data = {"column1": [1, 2, 3], "column2": ['a', 'b', 'c']}
 dataframe = pd.DataFrame(data)
 
@@ -190,7 +190,7 @@ dataframe = ... # initial dataframe
 # Select a subset of columns (returns a dataframe)
 subset = dataframe[["column1", "column3"]]
 
-# Select one column (returns a series)
+# Select one column (returns a Series)
 column = dataframe["column2"]
 \end{lstlisting}
 
@@ -378,7 +378,7 @@ dtype: object
 We covered two common data structure interfaces used in data analysis - Series and Dataframe.
 Series is a one-dimensional List-like data structure with support for index and an axis label.
 Data frame is a two-dimensional structure---a dictionary of columns.
-The whole dataframe can have an index associated, and the column of a Dataframe can be seen as a Series.
+The whole Dataframe can have an index associated, and the column of a Dataframe can be seen as a Series.
 Many operations in the data manipulation libraries are influenced by the SQL language operations such as join, select,
 group by, where, order by etc.
 The data structures also support vectorized operations like sums, products or comparing.

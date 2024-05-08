@@ -69,7 +69,7 @@ still sound.
 However, we can do something smarter.
 We will create and use the assumption that whenever the user inputs a Dataframe, the Column Structure of that Dataframe
 is known in advance.
-This is not a very strong assumption in practice given the fact that the structure of the dataframe is usually known
+This is not a very strong assumption in practice given the fact that the structure of the Dataframe is usually known
 during the process of writing the program anyway---otherwise we would not be able to write the program at all.
 
 So the abstract lattice consists of the Dataframe Structures and Series Structures.
@@ -179,7 +179,7 @@ It can then be extended to the variants with sets in a straightforward way.
 
     \item Plus operator (vectorized)
 
-    The Plus operator should work on a pair of two scalars, two series and a pair of scalar and series.
+    The Plus operator should work on a pair of two scalars, two Series and a pair of scalar and series.
     If only the types are known, we perform just the type check.
     If the values are both known, we perform the full operation.
 
@@ -287,7 +287,7 @@ An example of such operation can be the pivot operation.
 The result of a pivot operation has columns named after values from a selected column.
 But we do not know these values, since we only remember the Dataframe Structure.
 Another example of an operation, that we are unable to resolve the resulting Dataframe of is a transpose.
-The transpose function flips the whole dataframe along the diagonal (like with matrices), so the columns of the result
+The transpose function flips the whole Dataframe along the diagonal (like with matrices), so the columns of the result
 will be the rows of the original Dataframe, and the column names of the result will be the index values of the original.
 But, again, we do not know the index values.
 In such a situation, there is no other option than just returning Some Dataframe.
