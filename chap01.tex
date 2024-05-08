@@ -1,19 +1,19 @@
 \chapter{Abstract Interpretation}
 
-In this chapter we explain the Abstract Interpretation from the theoretical point of view.
-At first, we recall some basic mathematical definitions such as partial order or supremum and infimum.
-Then we use this knowledge to define lattices and Galois connections, that are the core concepts of Abstract
+In~this chapter we~explain the~Abstract~Interpretation from~the~theoretical point~of~view.
+At~first, we~recall some basic mathematical~definitions such~as partial~order or~supremum and~infimum.
+Then we~use this~knowledge to~define lattices and~Galois~connections, that are the~core~concepts of Abstract~
 Interpretation.
-We also formalize a program---its syntax, semantics, trace and Collecting semantics.
-At last, we use all this knowledge to explain the Abstract Interpretation method.
-This chapter is greatly inspired by Introduction to Abstract Interpretation by B.~Blanchet\cite{Blanchet:2002:AI}.
-He also covers more advanced topics that are not needed for our purposes, so I would refer the more curious readers
-to his article.
+We also formalize a~program---its~syntax, semantics, trace and~Collecting~semantics.
+At~last, we~use~all~this~knowledge to explain the Abstract Interpretation method.
+This chapter is greatly inspired by Introduction to Abstract Interpretation by B.~Blanchet~\cite{Blanchet:2002:AI}.
+He~also covers more~advanced~topics that are not~needed for our~purposes, so I~would refer the~more curious readers
+to~his~article.
 
 
 \section{Introductory Example} %=======================================================================================%
 
-We start with a very simple example that shows the basic idea behind abstract interpretation.
+We start with a~very~simple example that shows the basic idea behind abstract interpretation.
 I do not define the syntax of the programming language for now as I assume that it is mostly clear.
 Consider this very simple toy program:
 
