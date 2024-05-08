@@ -123,8 +123,6 @@ So we just take all possible Dataframes (Series) with the given Dataframe (Serie
     \end{gather*}
 \end{defn}
 
-\xxx{TODO prove that this is a galois connection}
-
 \section{Abstract Operations}
 
 In the first chapter, we mentioned that the abstract semantics can be systematically derived from the galois connection
@@ -168,9 +166,13 @@ It can then be extended to the variants with sets in a straightforward way.
     The JOIN is more interesting.
     The input is two DataframeStructures, type of join and related column names.
     The output should be the DataframeStructure of the joined Dataframe.
+    We should check that the columns that are used for joining exist in the original Dataframe and that the resulting
+    Dataframe is valid---there are no duplicate columns.
 
     \item GROUP BY \xxx{TODO}
 
+    The GROUP BY operation does not return a Dataframe.
+    It returns an object called DataFrameGroupBy
 
 
     \item \xxx{TODO add some vectorized operations too}

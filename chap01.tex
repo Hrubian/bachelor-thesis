@@ -79,11 +79,7 @@ Some examples:
     (matrix addition, multiplication, gaussian elimination) are correct.
 
     \item Geometry in 2D (or higher dimensions).
-     Points in the context of 2D (or higher dimensional) geography can be approximated by rectangular sectors.
-
-    \item Boolean algebra (True, False) can be approximated by adding third value Unknown, which represents uncertainty.
-
-%    \item Tabular data - the topic of this thesis
+    Points in the context of 2D (or higher dimensional) geography can be approximated by axis-aligned rectangular sectors.
 \end{itemize}
 
 Another possible application---Tabular data---will be covered in the chapter~\ref{ch:putting-it-all-together}.
@@ -283,23 +279,26 @@ of variables of the program, while the abstract lattice is the set of values we 
         (0, \infty) \: if + \in A \: \\
     \end{gather*}
 
-    \item Boolean algebra with uncertainty
 
-    The concrete lattice is $\powerset{\{True, False\}}$, the abstract lattice is \\ $\{True, False, Unknown\}$.
-    Note that $Unknown$ means that we do not know the actual value.
+    \item Abstracting geometric points in 2D to axis-aligned rectangular areas
 
-    Then definition of the abstraction is straightforward:
+    The concrete lattice is $\powerset{(x,y) \in \mathbb{R}^2}$ ordered by inclusion.
+    The abstract lattice is the set of all axis-aligned rectangles given by the two points $(x_1,y_1)$ and $(x_2,y_2)$,
+    where $x_1 \leq x_2$ and $|y_1 \leq y_2$.
+    We denote such a rectangle $Rect((x_1,y_1),(x_2,y_2))$.
+
+    Then the definition of the abstraction is as follows:
     \begin{gather*}
-        \alpha(\{True\}) = True\\
-        \alpha(\{False\}) = False\\
-        \alpha(\{True, False\}) = Unknown
+        \alpha(B) = Rect ( \\
+            (min\: x \: from B, min \: y \: from B), \\
+            (max \: x \: from B, max \: y \: from B) \\
+        )
     \end{gather*}
 
-    And the definition of concretization:
+    And the definition of the concretization function is:
     \begin{gather*}
-        \gamma(True) = \{True\}\\
-        \gamma(False) = \{False\}\\
-        \gamma(Unknown) = \{True, False\}
+        \gamma(Rect((x_1, y_1),(x_2, y_2))) = \\
+        \{(x,y) \forall x \in [x_1, x_2], \forall y \in [y_1, y_2]\}
     \end{gather*}
 
     \item Reducing matrices to their dimensions:
