@@ -31,15 +31,15 @@ import pandas as pd
 
 df = pd.read_csv("data.csv")
 df_copy = df
-df_copy.drop('column1', inplace=True)
+df_copy.drop("column1", inplace=True)
 
-grouped = df.groupby('column1')
+grouped = df.groupby("column1")
 # Error - column1 does not exist already
 
 final_score = df["score_a"] + df["score_b_note"]
 # Error - summing series of ints with strings
 
-print(df["colunm2")
+print(df["colunm2"])
 # Error - misspelled column name colunm2
 
 \end{lstlisting}
@@ -51,7 +51,7 @@ The results of data-frame transformations would then be determined by the functi
 Even though this~solution would solve the~issue with~column~naming and column~types, it~has many problems that dynamic
 languages do~not have.
 The~arguments mentioned for~the~popularity of~dynamic languages are~also~arguments against static languages.
-Namely, a steep~learning~curve, a complicated syntax, and a~technical complexity.
+Namely, a sharp~learning~curve, a complicated syntax, and a~technical complexity.
 Additionally, the~necessity for~a~lot~of~boilerplate code, worse readability and~the~fact, that~dynamic languages,
 contrary~to the~static languages, usually support a REPL~tool or~just creating one~file and running~it.
 Ideally, we would~like to~use dynamic languages like~Python, R or Julia, while keeping the~safety of~static languages.
@@ -78,17 +78,17 @@ The~idea of~analyzing programs working with~dataframes was~already proposed by~Y
 and~Ming-Yang~Lu~\cite{Zhuang:2022:TypeChecking}.
 However, we~aim to~present more~fundamental analysis and develop a more comprehensive tool.
 We will define our own framework with more levels of abstraction and expand the abstraction to non-pandas types as well.
-Also, we will interpret both branches of if-statements in case that we are not able to choose one.
+Also, we will interpret both branches of if-statements in case that we do not have enough information to choose one, and
+we plan to be able to work with more uncertainty from the user.
 
 In~the~first chapter of~the~thesis, we~will review the~theory of~POSETs, Lattices and~Galois~connection which
 are~the~core mathematical concepts of~Abstract Interpretation.
-Then, in~the~second chapter, we~will explore the~needs of~data scientists regarding the~tool for~data~manipulation.
-We~will~also take~a~look at~how pandas provide the data~scientists with these needs, and~we~will once~again shortly touch
-the~option based~on~type systems.
+Then, in~the~second chapter, we~will explore the~needs of~data scientists regarding the~tools for~data~manipulation.
+We~will~also take~a~look at~how Pandas provide the data~scientists with these needs.
 The~third chapter will~put all~the~pieces together.
 We~will define an~Abstract Interpretation framework for~the~world of~data-frames and~series.
 We~will also take~a~look at~how some basic operations like~merge, groupby or concatenation will~work in~the~abstract domain.
 The~fourth chapter will~be~dedicated to~the~implementation of~the~analysis~tool itself, its~architecture, documentation,
 capabilities, and~limitations.
-Finally, in~the~last, fifth, chapter, we~will evaluate the implemented solution on~a~set of~realistic examples of~pandas
+Finally, in~the~last, fifth, chapter, we~will evaluate the implemented solution on~a~set of~realistic examples of~Pandas
 code and~analyze and~discuss its~usability in~practice.
