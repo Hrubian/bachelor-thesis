@@ -8,8 +8,8 @@ Since we are mostly focusing on Pandas in Python, we assume Python environment w
 
 \begin{itemize}
     \item Python syntax
-    \item Standard Python data types - int, float, string, list, dictionary, tuple
-    \item Pandas is imported via \verb|import pandas as pd| statement
+    \item Standard Python data types---int, float, string, list, dictionary, tuple
+    \item Pandas is imported via the~\verb|import pandas as pd| statement
 \end{itemize}
 
 We also assume, unlike the Pandas, that Series are homogenous and Dataframes have homogenous columns.
@@ -44,7 +44,7 @@ Also, we define a Series Structure:
 The concrete lattice should correspond with the reality.
 Since the variables of our program are Dataframes and Series, we can imagine the set of all possible Dataframes and
 Series (with every finite number of rows/columns and all possible values).
-Then we define the concrete lattice as the power set of this set with the inclusion being the ordering. % todo chaotic
+Then we define the concrete lattice as the power set of this set with the inclusion being the ordering.
 To formalize this:
 
 \begin{defn}[The concrete lattice]
@@ -70,7 +70,7 @@ However, we can do something smarter.
 We will create and use the assumption that whenever the user inputs a Dataframe, the Column Structure of that Dataframe
 is known in advance.
 This is not a very strong assumption in practice given the fact that the structure of the dataframe is usually known
-during the process of writing the program anyway - otherwise we would not be able to write the program at all.
+during the process of writing the program anyway---otherwise we would not be able to write the program at all.
 
 So the abstract lattice consists of the Dataframe Structures and Series Structures.
 We take the set of all possible Dataframe Structures and Series Structures.
@@ -86,11 +86,11 @@ We again formalize this:
 
 \section{The Galois Connection}
 
-To create a Galois Connection we need an abstraction function and a concretization function.
+To create a Galois Connection, we need an abstraction function and a concretization function.
 
 In the abstraction function, we start with a set of Dataframes and Series, and we want a set of Dataframe Structures and
 Series Structures.
-The most natural way to define such function is to take the set of Dataframe Structures (Series Structures) of the
+The most natural way to define such a function is to take the set of Dataframe Structures (Series Structures) of the
 Dataframes (Series) from the input.
 Formally:
 
@@ -127,14 +127,14 @@ So we just take all possible Dataframes (Series) with the given Dataframe (Serie
 
 \section{Abstract Operations}
 
-In the first chapter we mentioned that the abstract semantics can be systematically derived from the galois connection
+In the first chapter, we mentioned that the abstract semantics can be systematically derived from the galois connection
 and the concrete semantics.
 However, it is often not the best way to get to the abstract semantics.
 We follow an alternative approach.
 We define the operations ourselves, since it is a very intuitive process.
-We do not define all the operations that we introduced in the previous chapter, we take a subset of them and
-the rest can be found in the Pandalyzer implementation and their formal model can be defined in a similar way as the
-operations discussed in this section.
+We do not define all the operations that we introduced in the previous chapter.
+We take a subset of them, and the rest can be found in the Pandalyzer implementation, and their formal model can be
+defined in a similar way as the operations discussed in this section.
 
 We also define the operations on the single Dataframe (Series) Structures rather than on the sets, since it is
 easier to understand.
@@ -144,7 +144,7 @@ It can then be extended to the variants with sets in a straightforward way.
     \item SELECT
 
     The first operation we will abstract is a simple SELECT\@.
-    We are abstracting selection of a subset of columns given their names.
+    We are abstracting the selection of a subset of columns given their names.
     This is easy: We take our Dataframe Structure and remove all columns that do not have the names in the selection.
     \begin{example}
 
@@ -152,15 +152,15 @@ It can then be extended to the variants with sets in a straightforward way.
 
         Output: DataFrameStructure(column1: int, column3: bool)
     \end{example}
-    In a real analysis we should check that all column name specified in select exist in the DataFrameStructure and
+    In a real analysis, we should check that all column names specified in select exist in the DataFrameStructure and
     announce an error if the opposite is true.
 
     \item WHERE
 
     The WHERE operation has the nice property that it does not change the Dataframe Structure.
     So we just return the input DataframeStructure.
-    In a real analysis we should also check that the column referenced in the predicate exists in the DataFrameStructure
-    and the comparison happens between compatible types - we should probably announce an error if we are trying to compare
+    In a real analysis, we should also check that the column referenced in the predicate exists in the DataFrameStructure
+    and the comparison happens between compatible types---we should probably announce an error if we are trying to compare
     a number to a string.
 
     \item JOIN (merge)
@@ -186,11 +186,11 @@ Additionally, there are operations that accept Dataframe or Series and return ot
 So we should also be able to work with normal ints, strings, lists, dictionaries or tuples.
 
 We also abstract these types but in a slightly different way.
-For example for a string, we do not remember some kind of abstract structure.
-Rather we try to remember the whole string if it is possible.
+For example, for a string, we do not remember some kind of abstract structure.
+Rather, we try to remember the whole string if it is possible.
 If it is not possible (we are not able to construct the string due to missing information), we just remember that the
 variable is a string with some unknown value (and we do not constraint the value in any way).
-This could be done better but that is outside the scope for this thesis.
+This could be done better, but that is outside the scope of this thesis.
 
 Ints or floats are handled in a similar way, but there is a difference in handling lists, dictionaries and tuples.
 We explain the concept on lists.
@@ -203,20 +203,20 @@ information that variable is a list (and we do not constraint the content of the
 
 \section{Final proposal}
 
-The only task that is left for us to finish the analysis framework is to combine the Dataframe and Series framework
+The only task left for us to finish the analysis framework is to combine the Dataframe and Series framework
 with the general abstraction proposed for other types (ints, strings, lists, \ldots).
 
 We design a hierarchy of abstract types.
-The higher levels of the hierarchy contain less precise (more abstract) types and the preciseness increases as we go
+The higher levels of the hierarchy contain less precise (more abstract) types, and the preciseness increases as we go
 down the hierarchy.
 There is the Unresolved Structure at the bottom of the hierarchy representing a value that we were not able to derive.
-This is usually a result of an invalid operation or a generally an invalid state.
-When we go up the hierarchy, the next level represents different type of knowledge for different types, specifically:
+This is usually a result of an invalid operation or generally an invalid state.
+When we go up the hierarchy, the next level represents a different type of knowledge for different types; specifically:
 
 \begin{itemize}
     \item For elementary types (string, int, float) it is a complete knowledge of the value.
-    \item For Dataframe and Series it represents knowledge of the Dataframe Structure or Series Structure.
-    \item For compound types (list, dictionary, tuple) we know their size and for each of them we remember some level
+    \item For Dataframe and Series, it represents knowledge of the Dataframe Structure or Series Structure.
+    \item For compound types (list, dictionary, tuple) we know their size, and for each of them we remember some level
     of abstraction from the hierarchy
 \end{itemize}
 
@@ -235,13 +235,13 @@ The Content represents an abstract type in the hierarchy.
 
 To satisfy the definition of a Lattice, every pair of elements must have a supremum and infimum.
 It can be seen from the Figure~\ref{fig:abstract_hierarchy} that the infimum exists.
-For two different values of the same type \verb|String("first")| and \verb|String("second")|, the infimum is
-\verb|SomeString|.
+For two different values of the same type~\verb|String("first")| and~\verb|String("second")|, the infimum
+is~\verb|SomeString|.
 For the two different types \verb|String("str")| and \verb(Int(7))|, the infimum is \verb|UnresolvedStructure|.
 The other cases are analogous and are left as an exercise for the reader.
 
 However, the idea misses suprema.
-For that purpose we define another structure called \verb|NondeterministicStructure|.
+For that purpose, we define another structure called~\verb|NondeterministicStructure|.
 The supremum of two elements of the hierarchy \verb|a| and \verb|b| is \verb|NondeterministicStructure(a, b)|.
 The idea is also applicable recursively, so the value \\
 \begin{verbatim}
@@ -265,8 +265,8 @@ Note that it is not a Complete Lattice as the whole hierarchy does not have a su
     \includegraphics[scale=0.5]{img/unresolved_structure}
 \end{figure}
 
-The Nondeterministic Structure will mostly occur when there is a branching (e.g.~an if-statement) in the program, and we are not
-able to resolve which branch we should go.
+The Nondeterministic Structure will mostly occur when there is a branching (e.g.~an if-statement) in the program, and we
+are not able to resolve which branch we should go.
 So the Nondeterministic Structure is a substitute that we need to use since we do not use the power set as the abstract
 lattice anymore.
 
@@ -276,17 +276,17 @@ lattice anymore.
 The presented framework has some limitations that are important to discuss.
 First, remembering just a Dataframe Structure prevents us from doing operations, that have the resulting Dataframe
 Structure dependent on the values in a Dataframe.
-Example of such operation can be the pivot operation.
+An example of such operation can be the pivot operation.
 The result of a pivot operation has columns named after values from a selected column.
 But we do not know these values, since we only remember the Dataframe Structure.
 Another example of an operation, that we are unable to resolve the resulting Dataframe of is a transpose.
 The transpose function flips the whole dataframe along the diagonal (like with matrices), so the columns of the result
-will be the rows of the original Dataframe and the column names of the result will be the index values of the original.
+will be the rows of the original Dataframe, and the column names of the result will be the index values of the original.
 But, again, we do not know the index values.
-In such situation there is no other option then just returning Some Dataframe.
+In such a situation, there is no other option than just returning Some Dataframe.
 
 Another possible problem can be an unknown value propagation, meaning that when there is a value with any uncertainty
-(e.g.\ Nondeterministic Structure or Some value), using this value in an operation will in most cases lead to an
+(e.g.,\ Nondeterministic Structure or Some value), using this value in an operation will in most cases lead to an
 operation result with an uncertainty as well.
 
 \section*{Summary}
