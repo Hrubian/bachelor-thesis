@@ -1,6 +1,7 @@
 \documentclass{tikzposter}
 \geometry{paperwidth=842mm,paperheight=1185mm}
 \usepackage{listings}
+\usepackage{graphicx}
 
 % Title, Author, Institute
 \title{Abstract Interpretation of Pandas}
@@ -85,7 +86,7 @@
             Tibble in R (R also has built-in support for data frames) or DataFrames.jl in Julia.
             The second result is the implementation of the Pandalyzer - Pandas analyzer based
             on the Abstract Interpretation framework proposed.
-            The Pandalyzer is still in the early stage of the development process and a lot of work is planned.
+            The Pandalyzer is still in the early stage of development process and a lot of work is planned.
             It serves as a proof of concept of the Abstract Interpretation framework for data-manipulation programs.
             However, it shows that the idea is implementable and can be very useful in practice.
         }
@@ -101,7 +102,18 @@
 
         \column{0.5}
 
-        \block{Further info} {meow}
+        \block{Further info}
+        {
+            \Large
+            \begin{tikzfigure}
+                \label{fig:pandalyzer_repo}
+                \includegraphics{img/qr_pandalyzer_github}
+            \end{tikzfigure}
+            \begin{tikzfigure}
+                \label{fig:thesis_repo}
+                \includegraphics{img/qr_thesis_github}
+            \end{tikzfigure}
+        }
 
     \end{columns}
 
