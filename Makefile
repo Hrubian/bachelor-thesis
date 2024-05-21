@@ -1,4 +1,4 @@
-all: thesis.pdf abstract-cs.pdf abstract-en.pdf
+all: thesis.pdf abstract-cs.pdf abstract-en.pdf poster.pdf
 
 %.pdf: force
 	latexmk $*.tex -pdf
