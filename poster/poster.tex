@@ -1,0 +1,53 @@
+\documentclass{tikzposter}[paper size=a0paper]
+%\geometry{paperwidth=842mm,paperheight=1185mm}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{fancyvrb}
+
+% Title, Author, Institute
+\title{Abstract Interpretation of Pandas}
+\author{Jan Hrubý}
+\institute{Charles University, Faculty of Mathematics and Physics}
+
+%Choose Layout
+\usetheme{Simple}
+
+\begin{document}
+
+    \maketitle
+
+    \begin{columns}
+        \column{0.666}
+
+        \begin{subcolumns}
+            \subcolumn{0.5}
+            \block{Motivation}{\input{poster/motivation}}
+            \block{Abstract Interpretation}{\input{poster/abstract_interpretation}}
+
+            \subcolumn{0.5}
+            \block{Framework}{\input{poster/framework}}
+            \block{Implementation}{\input{poster/implementation}}
+
+        \end{subcolumns}
+
+        \block{Case Study} {Meowww!!!}
+
+
+        \column{0.333}
+        \block{Capabilities}{\input{poster/capabilities}}
+        \block{Conclusion}{\input{poster/conclusion}}
+
+    \end{columns}
+
+    \begin{columns}
+
+        \column{0.666}
+        \block{Acknowledgements}{\input{poster/acknowledgements}}
+
+        \column{0.333}
+        \block{Further info}{\includegraphics{poster/img/further_info}}
+
+    \end{columns}
+
+\end{document}
