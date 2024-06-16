@@ -1,0 +1,13 @@
+Summary of analysis: OK
+Global data structures (7):
+/* snip */
+Warnings (0):
+
+Errors (0):
+
+Output files (1):
+File top_two_per_age.csv:
+    name_surname : StringType
+    score : IntType
+    match_name : StringType
+    age : IntType

@@ -1,0 +1,13 @@
+[attendees.csv]
+name = "string"
+surname = "string"
+age = "int"
+
+[matches.csv]
+id = "int"
+name = "string"
+
+[scores.csv]
+name_surname = "string"
+match_id = "int"
+score = "int"

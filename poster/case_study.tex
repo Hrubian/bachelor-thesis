@@ -1,0 +1,23 @@
+%\small
+
+\setlength{\columnsep}{20cm}
+\begin{multicols}{2}[
+The thesis contains five case studies demonstrating the practical capabilities of the Pandalyzer.
+We show one of them here. The listing~\ref{lst:code} shows an example Pandas code in Python.
+The listing~\ref{lst:config} contains the information about the input CSV files and needs to be provided to the
+Pandalyzer via a config file.
+The listing~\ref{lst:output} shows the output of the Pandalyzer after analyzing the code in listing~\ref{lst:code}.
+]
+
+\lstinputlisting
+    [basicstyle=\normalsize\ttfamily, numbers=left, caption=Pandas code in Python, label={lst:code}]
+    {poster/listings/case_study.py}
+
+\lstinputlisting
+    [basicstyle=\normalsize\ttfamily, caption=Configuration file, label={lst:config}]
+    {poster/listings/case_study_config.toml}
+\lstinputlisting
+    [basicstyle=\normalsize\ttfamily, caption=Output of Pandalyzer, label={lst:output}]
+    {poster/listings/analysis_output.txt}
+
+\end{multicols}

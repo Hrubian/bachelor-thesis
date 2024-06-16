@@ -1,9 +1,11 @@
-\documentclass{tikzposter}[paper size=a0paper]
+\documentclass[colspace=20mm, subcolspace=0mm, blockverticalspace=0mm]{tikzposter}[paper size=a0paper]
+\tikzposterlatexaffectionproofoff
 %\geometry{paperwidth=842mm,paperheight=1185mm}
 \usepackage{listings}
 \usepackage{graphicx}
 \usepackage{wrapfig}
 \usepackage{fancyvrb}
+\usepackage{multicol}
 
 % Title, Author, Institute
 \title{Abstract Interpretation of Pandas}
@@ -27,14 +29,14 @@
 
             \subcolumn{0.5}
             \block{Framework}{\input{poster/framework}}
-            \block{Implementation}{\input{poster/implementation}}
 
         \end{subcolumns}
 
-        \block{Case Study} {Meowww!!!}
+        \block{Example Case Study} {\input{poster/case_study}}
 
 
         \column{0.333}
+        \block{Implementation}{\input{poster/implementation}}
         \block{Capabilities}{\input{poster/capabilities}}
         \block{Conclusion}{\input{poster/conclusion}}
 
@@ -46,7 +48,7 @@
         \block{Acknowledgements}{\input{poster/acknowledgements}}
 
         \column{0.333}
-        \block{Further info}{\includegraphics{poster/img/further_info}}
+        \block{Further info}{\includegraphics[scale=0.92]{poster/img/further_info}}
 
     \end{columns}
 

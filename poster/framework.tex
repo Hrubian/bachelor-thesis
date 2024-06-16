@@ -1,8 +1,20 @@
-
-\Large
+\large
 The Pandas library provides the user with two main data structures: one-dimensional Series
 and two-dimensional tabular DataFrame.
 To be able to interpret the program with Pandas over the abstract domain, we must define the abstract lattice.
-The picture TODO shows how the abstract lattice is defined.
+The Figures~\ref{fig:hierarchy}~and~\ref{fig:upper_part} show how the abstract lattice is defined.
+
+\begin{tikzfigure}[Lower part of the Lattice]
+    \label{fig:hierarchy}
+    \includegraphics[scale=0.8]{poster/img/hier}
+\end{tikzfigure}
+
+\begin{tikzfigure}[Upper part of the Lattice]
+    \label{fig:upper_part}
+    \includegraphics[scale=0.8]{poster/img/nondeterm}
+\end{tikzfigure}
+
 There is the UnresolvedStructure at the bottom of the hierarchy, representing a value that we were not
 able to derive (usually due to some error in execution).
+And there is a NondeterministicStructure as a supremum for each pair representing uncertainty between two options.
+The uncertainty usually occurs in the if-statement, where we are not able to decide which branch to take.
