@@ -1,10 +1,22 @@
 \large
-The Pandalyzer is capable of detecting errors such as access to non-existent column, operation on incompatible types,
-incorrect function arguments, operations leading to an incorrect state.
-It also reports the structure of the output CSV files and is able to accept information about the structure of the input CSV files.
-The Pandalyzer is able to work with some amount of uncertainty generated from the user input.
-The supported functions include merge, groupby, drop, rename, read\_csv, to\_csv, concat, Dataframe creation,
-Series creation, the subscript operator in both get and set contexts and vectorized sums and products, aggregation function
-such as mean, sum, first, last, count or head.
+%The Pandalyzer is capable of detecting errors such as access to non-existent column, operation on incompatible types,
+%incorrect function arguments, operations leading to an incorrect state.
+%It also reports the structure of the output CSV files and is able to accept information about the structure of the input CSV files.
+%The Pandalyzer is able to work with some amount of uncertainty generated from the user input.
+%The supported functions include merge, groupby, drop, rename, read\_csv, to\_csv, concat, Dataframe creation,
+%Series creation, the subscript operator in both get and set contexts and vectorized sums and products, aggregation function
+%such as mean, sum, first, last, count or head.
+%
+%Moreover, the Pandalyzer is highly extensible, so implementing support for other Pandas functions is possible.
 
-Moreover, the Pandalyzer is highly extensible, so implementing support for other Pandas functions is possible.
+\begin{itemize}
+    \item Detecting access to non-existent column, operation on incompatible types, incorrect function arguments or
+    operations leading to incorrect state
+    \item CSV output reporting
+    \item CSV input hint handling
+    \item Handling uncertainty from the user input
+    \item Supports pandas functions including merge, groupby, drop, rename, read\_csv, to\_csv, concat, Dataframe
+    and Series creation, subscript in get and set contexts, vectorized sum and product, aggregation functions (mean, sum,
+    first, last, count, head)
+    \item High extensibility (w.r.t.\ other pandas function)
+\end{itemize}

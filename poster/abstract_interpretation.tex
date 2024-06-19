@@ -1,6 +1,8 @@
-\large
-Abstract Interpretation is a program analysis method based on the idea
-of abstracting the semantics of a program and interpretation of the
-program over the abstracted semantics.
-It uses the theory of Lattices and Galois Connection and is a sound method.
-We define an Abstract Interpretation framework for the Pandas library and Python language and use it for the analysis.
+\Large
+Program analysis method formally defined using Lattices and Galois Connection
+
+\begin{enumerate}
+    \item Model program values using an abstract domain (e.g., model numbers as \{+, -, any\})
+    \item Define behaviour of operations over the abstract domain
+    \item Evaluate (interpret) the user-written program over the abstract domain
+\end{enumerate}

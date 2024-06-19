@@ -1,24 +1,20 @@
-\large
-Pandas is a Python library widely used for data manipulation. %todo
-The code written with Pandas lacks any type-safety and everything is decided at runtime.
-This can potentially be a source of errors and crashes at runtime.
-
-Consider, for example, the following program:
-\definecolor{mygreen}{rgb}{0,0.6,0}
+\Large
+Pandas is a widely used data manipulation library for Python.
+The dynamic nature of Pandas and Python can be a source of runtime errors.
+Consider the following script:,
 \definecolor{mygray}{rgb}{0.5,0.5,0.5}
 \definecolor{mymauve}{rgb}{0.58,0,0.82}
 
 \lstset{ %
   backgroundcolor=\color{white},   % choose the background color
   basicstyle=\footnotesize,        % size of fonts used for the code
-  breaklines=true,                 % automatic line breaking only at whitespace
+  breaklines=false,                 % automatic line breaking only at whitespace
   captionpos=b,                    % sets the caption-position to bottom
-  commentstyle=\color{mygreen},    % comment style
-  escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+  commentstyle=\color{red},    % comment style
+  escapeinside={\%*}{*)}, % if you want to add LaTeX within your code
   keywordstyle=\color{blue},       % keyword style
   stringstyle=\color{mymauve},     % string literal style
 }
 \lstinputlisting[basicstyle=\normalsize\ttfamily, language=Python]{poster/listings/lst_motivation.py}
 
-Our goal is to design an analysis tool capable of recognizing similar errors without forcing the user
-to use another language with a stricter static type system, which is usually less user-friendly.
+Our goal is to design an analysis tool capable of recognizing similar errors.
