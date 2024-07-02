@@ -1,2 +1,32 @@
 \section{Motivation}
-TODO
+
+Pandas is a widely used data manipulation library for Python.
+The dynamic nature of Pandas and Python can be a source of runtime errors such as misspelled column names, nonexistent
+columns, incompatible column types and other invalid operations.
+Consider the script shown in the Listing~\ref{lst:motivation_script}
+
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+
+\lstset{ %
+    backgroundcolor=\color{white},   % choose the background color
+    basicstyle=\footnotesize,        % size of fonts used for the code
+    breaklines=false,                 % automatic line breaking only at whitespace
+    captionpos=b,                    % sets the caption-position to bottom
+    commentstyle=\color{red},    % comment style
+    escapeinside={\%*}{*)}, % if you want to add LaTeX within your code
+keywordstyle=\color{blue},       % keyword style
+stringstyle=\color{mymauve},     % string literal style
+}
+\lstinputlisting[
+    basicstyle=\footnotesize\ttfamily,
+    language=Python,
+    label={lst:motivation_script},
+    caption=TODO add caption,
+    captionpos=b
+]{poster/listings/lst_motivation.py} % todo the listing should be in a separate folder
+
+Our goal is (TODO or was?) to propose a framework for the analysis of data manipulation programs and design a tool
+leveraging the proposed framework.
+The tool should be capable of detecting errors similar to the ones presented in the script (TODO ref).
+

@@ -1,1 +1,14 @@
 \section{Implementation}
+
+The tool is implemented in Kotlin, and the source code can be found in the Pandalyzer GitHub repository (TODO cite).
+The tool has a command-line interface and produces (apart from human-readable) also JSON output, which makes it well
+suited for automatic(TODO Explain pipelines and CI).
+
+Let us go over what the tool does.
+It loads the Python script from the given input file.
+Then it parses the code and creates and abstract syntax tree (AST) of the module.
+Then it goes over the statements in the body of the module and interprets them while keeping the current context
+containing all currently active variables, raised errors and warnings, etc.
+Finally, it writes the result of the analysis to the standard output or to an output file (if provided).
+
+TODO uncertainty, invalid state, uses the framework\ldots
