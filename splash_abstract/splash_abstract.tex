@@ -2,10 +2,15 @@
 
 \usepackage{listings}
 \usepackage{graphicx}
+%\usepackage{biblatex}
+
+%\usepackage[natbib,style=iso-numeric,sorting=none]{biblatex}
+%\addbibresource{splash_abstract/bibliography.bib}
 
 %\acmJournal{Journal name?}
 \acmConference{SA'15 Art Papers}{November 02--06, 2015}{Kobe, Japan} % todo change :)
 \title{Abstract Interpretation of Pandas}
+
 % \subtitle{}
 \author{Bc. Jan Hrubý} % or bc? :) % TODO register at ORCID?
 \email{hrubyjan.mt@gmail.com} % TODO add supervisor
@@ -28,5 +33,10 @@
     \input{splash_abstract/implementation}
     \input{splash_abstract/case_study}
     \input{splash_abstract/results}
+
+%    \include{bibliography}
+    \bibliographystyle{plainnat}
+    \bibliography{splash_abstract/bibliography.bib}
+
 \end{document}
 

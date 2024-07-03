@@ -1,6 +1,7 @@
 \section{Implementation}
 
-The tool is implemented in Kotlin, and the source code can be found in the Pandalyzer GitHub repository (TODO cite).
+The tool is implemented in Kotlin~\cite{kotlinDocs}, and the source code can be found in the Pandalyzer GitHub
+repository~\cite{pandalyzer}.
 The tool has a command-line interface and produces (apart from human-readable) also JSON output, which makes it well
 suited for automatic(TODO Explain pipelines and CI).
 
@@ -11,4 +12,8 @@ Then it goes over the statements in the body of the module and interprets them w
 containing all currently active variables, raised errors and warnings, etc.
 Finally, it writes the result of the analysis to the standard output or to an output file (if provided).
 
-TODO uncertainty, invalid state, uses the framework\ldots
+The Pandalyzer uses the Abstract Interpretation framework defined in the section~\ref{sec:framework}.
+It uses the fork-join pattern to interpret both branches of an if-statement, where we are unable to derive which branch
+would be taken and combines the results to a NondeterministicStructure.
+The result of an invalid operation is the UnresolvedStructure, which ensures that the Pandalyzer is able to continue
+with the interpretation even when an error in the code is discovered.
