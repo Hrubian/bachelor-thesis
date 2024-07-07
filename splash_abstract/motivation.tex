@@ -1,9 +1,11 @@
 \section{Motivation}
 
-Pandas~\cite{pandas_docs} is a widely used data manipulation library for Python.
+Pandas~\cite{pandas_docs} is a widely used Python library for manipulating tabular data,
+also known as \emph{data frames}.
 The dynamic nature of Pandas and Python can be a source of runtime errors such as misspelled column names, nonexistent
 columns, incompatible column types, and other invalid operations.
 Consider the script shown in the Listing~\ref{lst:motivation_script}
+that uses the Titanic dataset from the Pandas tutorial~\cite{pandas_statistics_2020}.
 
 \definecolor{mygray}{rgb}{0.5,0.5,0.5}
 \definecolor{mymauve}{rgb}{0.58,0,0.82}
@@ -23,10 +25,11 @@ stringstyle=\color{mymauve},     % string literal style
     language=Python,
     label={lst:motivation_script},
     caption=Example Pandas code with mistakes,
-    captionpos=b
-]{poster/listings/lst_motivation.py} % todo the listing should be in a separate folder
+    captionpos=b,
+    numbers=left,
+]{splash_abstract/listings/lst_motivation.py}
 
 Our goal is to propose a framework for the analysis of data manipulation programs and design a tool
 leveraging the proposed framework.
-The tool should be capable of detecting errors similar to the ones presented in Listing~\ref{lst:motivation_script}.
+The tool should be capable of detecting common Pandas errors similar to the ones in the Listing~\ref{lst:motivation_script}.
 

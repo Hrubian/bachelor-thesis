@@ -1,16 +1,20 @@
-\section{Results}
+\section{Conclusion}
 
-Our work has two major results.
-The first result is the proposition of the framework for analyzing data-manipulation programs using abstract
-interpretation.
+Our work makes two major contributions.
+The first contribution is the definition of the abstract domain for the abstract interpretation of Python code
+that works with Pandas series and data frames.
 The idea could be used with other languages like the Tibble~\cite{tibble} library in R\@.
 The second result is the implementation of Pandalyzer---the Pandas analyzer based on the proposed framework.
-The Pandalyzer is still in the early stage of the development process, and it serves as a proof of concept rather
-than production-ready software.
+The Pandalyzer is still in the early stage of the development process.
 However, it already supports a large range of Pandas functions, and it proves that the idea is implementable and can be
 very useful in practice.
 
-\subsection{Future Work}
+The idea to use Abstract Interpretation to analyze programs working with Dataframes was already proposed
+by Yungyu~Zhuang and~Ming-Yang~Lu~\cite{Zhuang:2022:TypeChecking}.
+They also created a proof of concept implementation named PDChecker.
+However, PDChecker does not have as many checks, does not report output CSV files (via to\_csv() function) and
+does not allow for interpreting multiple branches of if-statements.
+Also, Pandalyzer supports more Pandas functions and detects a wider range of errors.
 
 The future works include adding support for other Pandas functions, other Python language constructs or including
 Pandas Indexes in the analysis process.
@@ -19,5 +23,6 @@ Matplotlib or Scipy.
 
 Another field where the Pandalyzer will be extended in the future is its integration to the IDEs such as PyCharm or
 VS Code.
-This could be done using the Language Server Protocol.
-% TODO Cite the stuff...
+This could be done using the Language Server Protocol~\cite{language_server_protocol}.
+We also intend to evaluate Pandalyzer empirically over a larger corpus of sample programs
+(could be done using the CodeDJ~\cite{vakar2021causality}).
