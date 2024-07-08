@@ -12,17 +12,18 @@ very useful in practice.
 The idea to use Abstract Interpretation to analyze programs working with Dataframes was already proposed
 by Yungyu~Zhuang and~Ming-Yang~Lu~\cite{Zhuang:2022:TypeChecking}.
 They also created a proof of concept implementation named PDChecker.
-However, PDChecker does not have as many checks, does not report output CSV files (via to\_csv() function) and
-does not allow for interpreting multiple branches of if-statements.
-Also, Pandalyzer supports more Pandas functions and detects a wider range of errors.
+However, PDChecker does not allow for interpreting multiple branches of if-statement and does not report the structure
+of output CSV files (via to\_csv() function).
+Also, Pandalyzer supports more Pandas functions and detects a wider range of errors
+(e.g.,\ conflicting columns in merge).
 
-The future works include adding support for other Pandas functions, other Python language constructs or including
+Future work includes adding support for other Pandas functions, other Python language constructs or including
 Pandas Indexes in the analysis process.
-The Pandalyzer could also be extended to support other well-known and related Python libraries such as Numpy,
+Pandalyzer could also be extended to support other well-known and related Python libraries such as Numpy,
 Matplotlib or Scipy.
 
 Another field where the Pandalyzer will be extended in the future is its integration to the IDEs such as PyCharm or
 VS Code.
 This could be done using the Language Server Protocol~\cite{language_server_protocol}.
 We also intend to evaluate Pandalyzer empirically over a larger corpus of sample programs
-(could be done using the CodeDJ~\cite{vakar2021causality}).
+(using a tool such as CodeDJ~\cite{vakar2021causality}).

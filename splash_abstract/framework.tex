@@ -1,12 +1,12 @@
-\section{Framework}\label{sec:framework}
+\section{Formal Model}\label{sec:framework}
 The Pandas library provides the user with two main data structures:
 a one-dimensional Series and a two-dimensional Dataframe.
 To abstractly interpret the Python program with Pandas code, we must define the abstract lattice for both the
 Pandas data structures and the basic Python data structures (int, float, list, string, etc.).
 
-The lattice consists of multiple layers with values representing the least amount of information at the top and values
-representing more detailed knowledge as we go down the hierarchy.
-The Figures~\ref{fig:hierarchy}~and~\ref{fig:upper_part} show how the abstract lattice is defined.
+Our work introduces a lattice that consists of multiple layers with values representing the least amount
+of information at the top and values representing more detailed knowledge as we go down the hierarchy.
+Figures~\ref{fig:hierarchy}~and~\ref{fig:upper_part} show how the abstract lattice is defined.
 
 \vspace{-1em} % for smaller gap between figures
 
@@ -27,8 +27,8 @@ The Figures~\ref{fig:hierarchy}~and~\ref{fig:upper_part} show how the abstract l
     \includegraphics[scale=0.3]{poster/img/nondeterm}
 \end{figure}
 
-The Invalid value at the very bottom of the lattice represents a value that we were not able to derive
-(usually due to an error in interpretation).
+The Invalid value at the very bottom of the lattice represents a value guaranteed to be unreachable
+(e.g., the result of a method call with incorrect arguments).
 Then there is a level containing full information in the case of Python types, column structure (column types and names)
 in the case of Dataframe and the knowledge of the type and label of a Series.
 In the next level, there is just partial information --- the type of the structure.
